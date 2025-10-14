@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - echo Build started on `date`
+      - echo $AWS_DEFAULT_REGION
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the application...
+      # Add your build commands here
+      - echo "Building sample application"
+  post_build:
+    commands:
+      - echo Build completed on `date`
+
+artifacts:
+  files:
+    - '**/*'
