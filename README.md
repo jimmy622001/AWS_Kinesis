@@ -1,4 +1,4 @@
-# AWS Learning Environment with Terraform
+# AWS Environment with Terraform
 
 This Terraform configuration creates a comprehensive AWS environment covering all major AWS services and architectural patterns for enterprise-grade cloud infrastructure.
 
@@ -178,3 +178,5 @@ Check the outputs for important resource information:
 4. **Resilience**: Configure cross-region disaster recovery
 5. **Observability**: Integrate Prometheus and Grafana
 6. **Compliance**: Implement SOC 2 and ISO 27001 controls
+
+![img.png](img.png)
