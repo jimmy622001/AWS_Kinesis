@@ -138,7 +138,7 @@ resource "aws_vpc_endpoint" "dynamodb" {
 # Customer Gateway for VPN
 resource "aws_customer_gateway" "main" {
   bgp_asn    = 65000
-  ip_address = "203.0.113.12"  # Replace with your public IP
+  ip_address = "203.0.113.12" # Replace with your public IP
   type       = "ipsec.1"
 
   tags = {
@@ -170,7 +170,7 @@ resource "aws_vpn_connection" "main" {
 # VPN Connection Route
 resource "aws_vpn_connection_route" "office" {
   vpn_connection_id      = aws_vpn_connection.main.id
-  destination_cidr_block = "192.168.1.0/24"  # On-premises network
+  destination_cidr_block = "192.168.1.0/24" # On-premises network
 }
 
 # Transit Gateway

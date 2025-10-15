@@ -32,3 +32,13 @@ output "eventbridge_bus_name" {
   description = "Name of the EventBridge custom bus"
   value       = module.event_systems.eventbridge_bus_name
 }
+
+output "prometheus_url" {
+  description = "Prometheus URL (via ALB)"
+  value       = "http://${module.containers.load_balancer_dns}/prometheus"
+}
+
+output "grafana_url" {
+  description = "Grafana URL (via ALB)"
+  value       = "http://${module.containers.load_balancer_dns}/grafana"
+}

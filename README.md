@@ -34,6 +34,12 @@ This Terraform configuration creates a comprehensive AWS environment covering al
 - **CloudTrail**: API call logging
 - **Infrastructure as Code**: Modular Terraform design
 
+### 8. Advanced Monitoring & Observability
+- **Prometheus**: Metrics collection and time-series database
+- **Grafana**: Advanced visualization and dashboards
+- **EFS Storage**: Persistent data for monitoring tools
+- **Container Insights**: Deep container and application monitoring
+
 ### 5. Serverless Architecture
 - **Lambda Functions**: With VPC connectivity and X-Ray tracing
 - **API Gateway**: RESTful API endpoints
@@ -89,6 +95,8 @@ Check the outputs for important resource information:
 - VPN connection ID
 - Transit Gateway ID
 - RDS Multi-AZ endpoint
+- Prometheus URL (http://ALB-DNS/prometheus)
+- Grafana URL (http://ALB-DNS/grafana) - admin/admin123
 
 ## Learning Exercises
 
@@ -123,6 +131,10 @@ Check the outputs for important resource information:
 - Set up CloudWatch alarms for critical metrics
 - Use X-Ray service map for application insights
 - Review CloudTrail events for security auditing
+- Access Prometheus metrics at /prometheus endpoint
+- Build custom Grafana dashboards for application metrics
+- Monitor ECS container performance with Prometheus
+- Set up alerting rules in Prometheus
 
 ### 6. CI/CD & GitOps
 - Push code to CodeCommit repository
@@ -170,13 +182,16 @@ Check the outputs for important resource information:
 - Automated backup and disaster recovery
 - Real-time data processing with Kinesis Analytics
 - Distributed tracing with X-Ray
+- Advanced monitoring with Prometheus and Grafana
 
 ## Advanced Learning Paths
 1. **Security**: Add AWS Config for compliance monitoring
 2. **Networking**: Implement Direct Connect for dedicated connectivity
 3. **Operations**: Set up AWS Systems Manager for patch management
 4. **Resilience**: Configure cross-region disaster recovery
-5. **Observability**: Integrate Prometheus and Grafana
+5. **Observability**: ✅ Prometheus and Grafana integrated
 6. **Compliance**: Implement SOC 2 and ISO 27001 controls
+7. **Advanced Metrics**: Add custom application metrics to Prometheus
+8. **Alerting**: Configure PagerDuty/Slack integration with Grafana
 
 ![img.png](img.png)

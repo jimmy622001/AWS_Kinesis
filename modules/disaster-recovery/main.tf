@@ -82,7 +82,7 @@ resource "aws_db_instance" "main" {
   max_allocated_storage = 100
   storage_type          = "gp2"
   storage_encrypted     = true
-  kms_key_id           = var.kms_key_arn
+  kms_key_id            = var.kms_key_arn
 
   engine         = "mysql"
   engine_version = "8.0"
@@ -90,15 +90,15 @@ resource "aws_db_instance" "main" {
 
   db_name  = "learningdb"
   username = "admin"
-  password = "changeme123!"  # Use AWS Secrets Manager in production
+  password = "changeme123!" # Use AWS Secrets Manager in production
 
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name   = aws_db_subnet_group.main.name
 
-  multi_az               = true
+  multi_az                = true
   backup_retention_period = 7
-  backup_window          = "03:00-04:00"
-  maintenance_window     = "sun:04:00-sun:05:00"
+  backup_window           = "03:00-04:00"
+  maintenance_window      = "sun:04:00-sun:05:00"
 
   skip_final_snapshot = true
   deletion_protection = false
@@ -140,7 +140,7 @@ resource "aws_dlm_lifecycle_policy" "ebs_snapshots" {
   state              = "ENABLED"
 
   policy_details {
-    resource_types   = ["VOLUME"]
+    resource_types = ["VOLUME"]
     target_tags = {
       Environment = "learning"
     }

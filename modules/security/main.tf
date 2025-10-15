@@ -191,8 +191,8 @@ resource "aws_wafv2_web_acl" "main" {
 
     visibility_config {
       cloudwatch_metrics_enabled = false
-      metric_name                 = "CommonRuleSetMetric"
-      sampled_requests_enabled    = false
+      metric_name                = "CommonRuleSetMetric"
+      sampled_requests_enabled   = false
     }
   }
 
@@ -213,8 +213,8 @@ resource "aws_wafv2_web_acl" "main" {
 
     visibility_config {
       cloudwatch_metrics_enabled = false
-      metric_name                 = "KnownBadInputsRuleSetMetric"
-      sampled_requests_enabled    = false
+      metric_name                = "KnownBadInputsRuleSetMetric"
+      sampled_requests_enabled   = false
     }
   }
 
@@ -224,8 +224,8 @@ resource "aws_wafv2_web_acl" "main" {
 
   visibility_config {
     cloudwatch_metrics_enabled = false
-    metric_name                 = "${var.project_name}WAF"
-    sampled_requests_enabled    = false
+    metric_name                = "${var.project_name}WAF"
+    sampled_requests_enabled   = false
   }
 }
 
