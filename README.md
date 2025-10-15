@@ -179,4 +179,4 @@ Check the outputs for important resource information:
 5. **Observability**: Integrate Prometheus and Grafana
 6. **Compliance**: Implement SOC 2 and ISO 27001 controls
 
-![img.png](img.png)
+![img_1.png](img_1.png)
