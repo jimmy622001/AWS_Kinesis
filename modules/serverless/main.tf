@@ -56,6 +56,10 @@ resource "aws_lambda_function" "main" {
     security_group_ids = [aws_security_group.lambda.id]
   }
 
+  tracing_config {
+    mode = "Active"
+  }
+
   environment {
     variables = {
       DYNAMODB_TABLE = aws_dynamodb_table.main.name

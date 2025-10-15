@@ -22,3 +22,13 @@ output "nat_gateway_ids" {
   description = "IDs of the NAT Gateways"
   value       = aws_nat_gateway.main[*].id
 }
+
+output "vpn_connection_id" {
+  description = "ID of the VPN connection"
+  value       = aws_vpn_connection.main.id
+}
+
+output "transit_gateway_id" {
+  description = "ID of the Transit Gateway"
+  value       = aws_ec2_transit_gateway.main.id
+}

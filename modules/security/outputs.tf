@@ -32,3 +32,8 @@ output "ecs_execution_role_arn" {
   description = "ARN of the ECS execution IAM role"
   value       = aws_iam_role.ecs_execution_role.arn
 }
+
+output "waf_web_acl_arn" {
+  description = "ARN of the WAF Web ACL"
+  value       = aws_wafv2_web_acl.main.arn
+}

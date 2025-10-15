@@ -135,4 +135,96 @@ resource "aws_vpc_endpoint" "dynamodb" {
   }
 }
 
+# Customer Gateway for VPN
+resource "aws_customer_gateway" "main" {
+  bgp_asn    = 65000
+  ip_address = "203.0.113.12"  # Replace with your public IP
+  type       = "ipsec.1"
+
+  tags = {
+    Name = "${var.project_name}-customer-gateway"
+  }
+}
+
+# VPN Gateway
+resource "aws_vpn_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.project_name}-vpn-gateway"
+  }
+}
+
+# Site-to-Site VPN Connection
+resource "aws_vpn_connection" "main" {
+  customer_gateway_id = aws_customer_gateway.main.id
+  type                = "ipsec.1"
+  vpn_gateway_id      = aws_vpn_gateway.main.id
+  static_routes_only  = true
+
+  tags = {
+    Name = "${var.project_name}-vpn-connection"
+  }
+}
+
+# VPN Connection Route
+resource "aws_vpn_connection_route" "office" {
+  vpn_connection_id      = aws_vpn_connection.main.id
+  destination_cidr_block = "192.168.1.0/24"  # On-premises network
+}
+
+# Transit Gateway
+resource "aws_ec2_transit_gateway" "main" {
+  description = "${var.project_name} Transit Gateway"
+
+  tags = {
+    Name = "${var.project_name}-tgw"
+  }
+}
+
+# Transit Gateway VPC Attachment
+resource "aws_ec2_transit_gateway_vpc_attachment" "main" {
+  subnet_ids         = aws_subnet.private[*].id
+  transit_gateway_id = aws_ec2_transit_gateway.main.id
+  vpc_id             = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.project_name}-tgw-attachment"
+  }
+}
+
+# Network ACLs
+resource "aws_network_acl" "private" {
+  vpc_id = aws_vpc.main.id
+
+  egress {
+    protocol   = "-1"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+
+  ingress {
+    protocol   = "-1"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = var.vpc_cidr
+    from_port  = 0
+    to_port    = 0
+  }
+
+  tags = {
+    Name = "${var.project_name}-private-nacl"
+  }
+}
+
+resource "aws_network_acl_association" "private" {
+  count = length(aws_subnet.private)
+
+  network_acl_id = aws_network_acl.private.id
+  subnet_id      = aws_subnet.private[count.index].id
+}
+
 data "aws_region" "current" {}

@@ -88,3 +88,13 @@ module "monitoring" {
   vpc_id       = module.networking.vpc_id
   project_name = var.project_name
 }
+
+module "disaster_recovery" {
+  source = "./modules/disaster-recovery"
+
+  vpc_id             = module.networking.vpc_id
+  vpc_cidr           = var.vpc_cidr
+  private_subnet_ids = module.networking.private_subnet_ids
+  kms_key_arn        = module.security.kms_key_id
+  project_name       = var.project_name
+}
