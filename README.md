@@ -312,4 +312,5 @@ Check the outputs for important resource information:
 - **Data Integrity Validation** with checksums
 - **Point-in-Time Recovery** for trading engine state
 
-![img.png](img.png)
+![layout_image.png](layout_image.png)
+
