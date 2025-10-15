@@ -2,6 +2,7 @@
 *.tfstate
 *.tfstate.*
 *.tfvars
+!terraform.tfvars.example
 .terraform/
 .terraform.lock.hcl
 crash.log
@@ -15,13 +16,14 @@ aws-exports.js
 
 # Lambda artifacts
 *.zip
-*.py
+lambda_function.py
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*.iml
 
 # OS
 .DS_Store
