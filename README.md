@@ -14,6 +14,7 @@ Designed for **microsecond-latency trading systems** with **99.99% uptime** requ
 - **Placement Groups**: Cluster compute instances for maximum performance
 - **C5n/M5n Instances**: 100 Gbps networking capability
 - **VPC with Multi-AZ Setup**: Public/private subnets across 2 AZs
+- **VPC Endpoints**: Private connectivity for Kinesis, S3, DynamoDB (no internet traversal)
 - **Direct Connect Ready**: Optimized for market data feeds
 - **Transit Gateway**: Centralized connectivity hub for trading venues
 - **IPSec VPN**: Secure site-to-site connections for backup connectivity
@@ -129,6 +130,7 @@ Check the outputs for important resource information:
 ### 1. Ultra-Low Latency Networking
 
 - **Market Data Connectivity**: Configure Direct Connect for exchange feeds
+- **VPC Endpoint Testing**: Verify Kinesis traffic stays within VPC (no internet traversal)
 - **Latency Testing**: Measure round-trip times between trading engines
 - **Network Optimization**: Test placement groups and enhanced networking
 - **Security Hardening**: Implement dedicated tenancy for sensitive algorithms

@@ -135,6 +135,48 @@ resource "aws_vpc_endpoint" "dynamodb" {
   }
 }
 
+# Kinesis VPC Endpoints for ultra-low latency trading
+resource "aws_vpc_endpoint" "kinesis_streams" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.kinesis-streams"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = aws_subnet.private[*].id
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  
+  tags = {
+    Name = "${var.project_name}-kinesis-streams-endpoint"
+  }
+}
+
+resource "aws_vpc_endpoint" "kinesis_firehose" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${data.aws_region.current.name}.kinesis-firehose"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = aws_subnet.private[*].id
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  
+  tags = {
+    Name = "${var.project_name}-kinesis-firehose-endpoint"
+  }
+}
+
+# Security Group for VPC Endpoints
+resource "aws_security_group" "vpc_endpoints" {
+  name_prefix = "${var.project_name}-vpc-endpoints-"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+  }
+
+  tags = {
+    Name = "${var.project_name}-vpc-endpoints-sg"
+  }
+}
+
 # Customer Gateway for VPN
 resource "aws_customer_gateway" "main" {
   bgp_asn    = 65000
