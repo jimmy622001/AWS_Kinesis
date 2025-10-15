@@ -1,8 +1,8 @@
-# Kinesis Data Stream
+# Kinesis Data Stream - Optimized for Trading
 resource "aws_kinesis_stream" "main" {
   name             = "${var.project_name}-stream"
-  shard_count      = 1
-  retention_period = 24
+  shard_count      = 10  # Higher throughput for market data
+  retention_period = 168 # 7 days for compliance
 
   shard_level_metrics = [
     "IncomingRecords",
@@ -102,13 +102,14 @@ resource "aws_cloudwatch_event_rule" "main" {
   })
 }
 
-# SQS Queue
+# SQS Queue - Trading Optimized
 resource "aws_sqs_queue" "main" {
-  name                      = "${var.project_name}-queue"
-  delay_seconds             = 90
-  max_message_size          = 2048
-  message_retention_seconds = 86400
-  receive_wait_time_seconds = 10
+  name                       = "${var.project_name}-queue"
+  delay_seconds              = 0       # No delay for trading
+  max_message_size           = 262144  # Larger messages
+  message_retention_seconds  = 1209600 # 14 days compliance
+  receive_wait_time_seconds  = 0       # No long polling
+  visibility_timeout_seconds = 30
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.dlq.arn
