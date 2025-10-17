@@ -143,7 +143,7 @@ resource "aws_cloudwatch_log_group" "ecs" {
 resource "aws_eks_cluster" "main" {
   name     = "${var.project_name}-eks"
   role_arn = aws_iam_role.eks_cluster_role.arn
-  version  = "1.28"
+  version  = "1.32"
 
   vpc_config {
     subnet_ids              = concat(var.public_subnet_ids, var.private_subnet_ids)

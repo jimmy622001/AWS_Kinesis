@@ -180,7 +180,7 @@ resource "aws_security_group" "vpc_endpoints" {
 # Customer Gateway for VPN
 resource "aws_customer_gateway" "main" {
   bgp_asn    = 65000
-  ip_address = "203.0.113.12" # Replace with your public IP
+  ip_address = var.customer_gateway_ip
   type       = "ipsec.1"
 
   tags = {
@@ -212,7 +212,7 @@ resource "aws_vpn_connection" "main" {
 # VPN Connection Route
 resource "aws_vpn_connection_route" "office" {
   vpn_connection_id      = aws_vpn_connection.main.id
-  destination_cidr_block = "192.168.1.0/24" # On-premises network
+  destination_cidr_block = var.onpremises_cidr
 }
 
 # Transit Gateway

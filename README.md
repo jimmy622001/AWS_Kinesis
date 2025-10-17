@@ -29,6 +29,7 @@ Designed for **microsecond-latency trading systems** with **99.99% uptime** requ
 
 ### 3. Financial-Grade Security & Compliance
 
+- **AWS Secrets Manager**: Secure storage for passwords and sensitive configuration
 - **Dedicated Tenancy**: Isolated compute for sensitive trading algorithms
 - **Security Groups**: Trading engine, market data, and compliance tiers
 - **Network ACLs**: Multi-layer security for trading networks
@@ -97,7 +98,11 @@ terraform init
 
 ```bash
 cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars with your preferred settings
+# Edit terraform.tfvars with your environment-specific settings:
+# - Update passwords for Rancher, Grafana, and RDS
+# - Set your public IP for customer gateway
+# - Configure on-premises network CIDR
+# - Adjust EKS cluster specifications
 ```
 
 ### Step 3: Plan Deployment
@@ -131,10 +136,11 @@ Check the outputs for important resource information:
 
 ## Trading System Learning Exercises
 
-### 1. Ultra-Low Latency Networking
+### 1. Ultra-Low Latency Networking & Security
 
 - **Market Data Connectivity**: Configure Direct Connect for exchange feeds
 - **VPC Endpoint Testing**: Verify Kinesis traffic stays within VPC (no internet traversal)
+- **Secrets Management**: Rotate passwords using AWS Secrets Manager
 - **Latency Testing**: Measure round-trip times between trading engines
 - **Network Optimization**: Test placement groups and enhanced networking
 - **Security Hardening**: Implement dedicated tenancy for sensitive algorithms
@@ -233,6 +239,7 @@ kubectl apply -f trading-app.yaml
 
 ## Security Best Practices Implemented
 
+- **Secrets Management**: AWS Secrets Manager for secure password storage
 - **IAM**: Least-privilege roles for all services
 - **Encryption**: KMS keys for data at rest and in transit
 - **Network Security**: Security groups, NACLs, and private subnets
@@ -240,6 +247,7 @@ kubectl apply -f trading-app.yaml
 - **VPN Security**: IPSec tunnels for secure hybrid connectivity
 - **Monitoring**: CloudTrail, VPC Flow Logs, and X-Ray tracing
 - **Backup**: Automated backup strategies with encryption
+- **Configuration Security**: No hardcoded passwords in Terraform code
 
 ## Troubleshooting Guide
 
@@ -256,7 +264,7 @@ kubectl apply -f trading-app.yaml
 - **Ultra-Low Latency**: Sub-millisecond order execution capability
 - **High Availability**: 99.99% uptime with <30s failover
 - **Regulatory Compliance**: 14-day retention, audit trails, immutable logs
-- **Enhanced Security**: Dedicated tenancy, customer-managed encryption
+- **Enhanced Security**: AWS Secrets Manager, dedicated tenancy, customer-managed encryption
 - **Market Data Optimization**: 10-shard Kinesis for high-throughput feeds
 - **Real-Time Risk Management**: Instant position monitoring and alerts
 - **Disaster Recovery**: Cross-region replication with data integrity

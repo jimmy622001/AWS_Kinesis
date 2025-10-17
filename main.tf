@@ -35,11 +35,23 @@ locals {
 }
 
 # Module calls for different learning areas
+module "secrets" {
+  source = "./modules/secrets"
+
+  project_name               = var.project_name
+  rancher_bootstrap_password = var.rancher_bootstrap_password
+  grafana_admin_password     = var.grafana_admin_password
+  rds_master_password        = var.rds_master_password
+}
+
 module "networking" {
   source = "./modules/networking"
 
-  vpc_cidr = var.vpc_cidr
-  azs      = local.azs
+  vpc_cidr            = var.vpc_cidr
+  azs                 = local.azs
+  project_name        = var.project_name
+  customer_gateway_ip = var.customer_gateway_ip
+  onpremises_cidr     = var.onpremises_cidr
 }
 
 module "security" {
