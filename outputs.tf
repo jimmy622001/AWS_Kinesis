@@ -42,3 +42,13 @@ output "grafana_url" {
   description = "Grafana URL (via ALB)"
   value       = "http://${module.containers.load_balancer_dns}/grafana"
 }
+
+output "eks_cluster_name" {
+  description = "Name of the EKS cluster"
+  value       = module.containers.eks_cluster_name
+}
+
+output "rancher_url" {
+  description = "Rancher management URL"
+  value       = module.containers.rancher_url
+}

@@ -22,3 +22,18 @@ output "alb_listener_arn" {
   description = "ARN of the ALB listener"
   value       = aws_lb_listener.main.arn
 }
+
+output "eks_cluster_name" {
+  description = "Name of the EKS cluster"
+  value       = aws_eks_cluster.main.name
+}
+
+output "eks_cluster_endpoint" {
+  description = "Endpoint of the EKS cluster"
+  value       = aws_eks_cluster.main.endpoint
+}
+
+output "rancher_url" {
+  description = "Rancher management URL"
+  value       = "http://${aws_lb.main.dns_name}/rancher"
+}

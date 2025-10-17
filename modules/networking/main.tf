@@ -137,24 +137,24 @@ resource "aws_vpc_endpoint" "dynamodb" {
 
 # Kinesis VPC Endpoints for ultra-low latency trading
 resource "aws_vpc_endpoint" "kinesis_streams" {
-  vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.kinesis-streams"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = aws_subnet.private[*].id
-  security_group_ids  = [aws_security_group.vpc_endpoints.id]
-  
+  vpc_id             = aws_vpc.main.id
+  service_name       = "com.amazonaws.${data.aws_region.current.name}.kinesis-streams"
+  vpc_endpoint_type  = "Interface"
+  subnet_ids         = aws_subnet.private[*].id
+  security_group_ids = [aws_security_group.vpc_endpoints.id]
+
   tags = {
     Name = "${var.project_name}-kinesis-streams-endpoint"
   }
 }
 
 resource "aws_vpc_endpoint" "kinesis_firehose" {
-  vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.kinesis-firehose"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = aws_subnet.private[*].id
-  security_group_ids  = [aws_security_group.vpc_endpoints.id]
-  
+  vpc_id             = aws_vpc.main.id
+  service_name       = "com.amazonaws.${data.aws_region.current.name}.kinesis-firehose"
+  vpc_endpoint_type  = "Interface"
+  subnet_ids         = aws_subnet.private[*].id
+  security_group_ids = [aws_security_group.vpc_endpoints.id]
+
   tags = {
     Name = "${var.project_name}-kinesis-firehose-endpoint"
   }
