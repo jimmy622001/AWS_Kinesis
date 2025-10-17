@@ -62,11 +62,13 @@ Designed for **microsecond-latency trading systems** with **99.99% uptime** requ
 - **DynamoDB**: NoSQL database
 - **S3**: Object storage with versioning and encryption
 
-### 6. Container Orchestration
+### 6. Container Orchestration & Management
 
-- **ECS Fargate**: Serverless containers
-- **Auto Scaling**: CPU-based scaling policies
-- **Application Load Balancer**: Traffic distribution
+- **ECS Fargate**: Serverless containers for trading applications
+- **EKS Cluster**: Kubernetes orchestration with managed node groups
+- **Rancher Management**: Multi-cluster Kubernetes management platform
+- **Auto Scaling**: CPU-based scaling policies for both ECS and EKS
+- **Application Load Balancer**: Traffic distribution with path-based routing
 
 ### 7. Trading System Disaster Recovery
 
@@ -124,6 +126,8 @@ Check the outputs for important resource information:
 - RDS Multi-AZ endpoint
 - Prometheus URL (http://ALB-DNS/prometheus)
 - Grafana URL (http://ALB-DNS/grafana) - admin/admin123
+- Rancher URL (http://ALB-DNS/rancher) - admin/admin123
+- EKS cluster name for kubectl configuration
 
 ## Trading System Learning Exercises
 
@@ -143,12 +147,15 @@ Check the outputs for important resource information:
 - Monitor function performance with X-Ray traces
 - Analyze distributed request flows
 
-### 3. Containers & Auto Scaling
+### 3. Container Orchestration & Kubernetes Management
 
-- Deploy custom container images to ECS Fargate
-- Test CPU-based auto-scaling policies
-- Examine load balancer health checks
-- Monitor container insights in CloudWatch
+- **ECS Fargate**: Deploy trading applications to serverless containers
+- **EKS Setup**: Configure kubectl to connect to the EKS cluster
+- **Rancher Management**: Use Rancher UI to manage multiple Kubernetes clusters
+- **Container Scaling**: Test auto-scaling policies for both ECS and EKS workloads
+- **Load Balancer Testing**: Examine health checks and traffic distribution
+- **Kubernetes Deployments**: Deploy trading algorithms using Helm charts
+- **Multi-Cluster Operations**: Manage development, staging, and production clusters
 
 ### 4. High-Frequency Trading Architecture
 
@@ -182,6 +189,37 @@ Check the outputs for important resource information:
 - Restore from AWS Backup vault
 - Verify EBS snapshot restoration
 - Practice incident response procedures
+
+## Rancher Kubernetes Management
+
+### Accessing Rancher
+1. **Login**: Navigate to `http://ALB-DNS/rancher`
+2. **Credentials**: admin / admin123
+3. **First Setup**: Complete initial Rancher configuration
+
+### Managing EKS Cluster
+1. **Import Cluster**: Add the EKS cluster to Rancher management
+2. **Deploy Applications**: Use Rancher catalog for trading applications
+3. **Monitor Resources**: View cluster health and resource usage
+4. **Scale Workloads**: Adjust replica counts based on trading volume
+
+### kubectl Configuration
+```bash
+# Configure kubectl for EKS cluster
+aws eks update-kubeconfig --region us-east-1 --name aws-learning-eks
+
+# Verify connection
+kubectl get nodes
+
+# Deploy sample trading application
+kubectl apply -f trading-app.yaml
+```
+
+### Multi-Cluster Operations
+- **Development**: Deploy and test trading algorithms
+- **Staging**: Pre-production validation with market data
+- **Production**: Live trading with high availability
+- **Disaster Recovery**: Cross-region cluster management
 
 ## Cost Management
 
@@ -224,6 +262,7 @@ Check the outputs for important resource information:
 - **Disaster Recovery**: Cross-region replication with data integrity
 - **Performance Monitoring**: Microsecond-precision latency tracking
 - **Scalable Architecture**: Auto-scaling for market volatility spikes
+- **Multi-Cluster Management**: Rancher for Kubernetes orchestration across environments
 
 ## Advanced Trading System Paths
 
