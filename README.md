@@ -359,5 +359,15 @@ kubectl apply -f trading-app.yaml
 - **Data Integrity Validation** with checksums
 - **Point-in-Time Recovery** for trading engine state
 
+## Infrastructure Visualization
+
+![AWS Kinesis Infrastructure Diagram](docs/infrastructure_diagram/aws_kinesis_infrastructure.png)
+
+For a detailed, interactive version of this architecture diagram:
+- See the [infrastructure diagram documentation](docs/infrastructure_diagram/README.md)
+- Open the [draw.io XML file](docs/infrastructure_diagram/aws_kinesis_infrastructure.drawio.xml) in [draw.io](https://app.diagrams.net)
+
 ![layout_image.png](layout_image.png)
+![aws kinesis layout .png](aws%20kinesis%20layout%20.png)
+
 

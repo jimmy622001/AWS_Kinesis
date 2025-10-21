@@ -28,3 +28,5 @@ lambda_function.py
 # OS
 .DS_Store
 Thumbs.db
+.codemie
+.idea
