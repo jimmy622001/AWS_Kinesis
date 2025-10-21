@@ -1,0 +1,308 @@
+<mxfile host="app.diagrams.net" modified="2023-12-01T12:00:00.000Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36" etag="123456789abc" version="14.6.3" type="device">
+  <diagram id="aws-kinesis-infrastructure" name="AWS Kinesis Infrastructure">
+    <mxGraphModel dx="1422" dy="798" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- AWS Cloud Border -->
+        <mxCell id="aws-cloud" value="AWS Cloud" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_cloud_alt;strokeColor=#232F3E;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#232F3E;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="1080" height="740" as="geometry" />
+        </mxCell>
+        
+        <!-- Data Ingestion Group -->
+        <mxCell id="data-ingestion" value="Data Ingestion" style="fillColor=#EFF0F3;strokeColor=#D4D4D4;dashed=1;verticalAlign=top;fontStyle=0;fontColor=#232F3E;rounded=1;arcSize=10;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="40" y="60" width="320" height="280" as="geometry" />
+        </mxCell>
+        
+        <!-- Producer Applications -->
+        <mxCell id="producer-apps" value="Producer Applications" style="outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#D86613;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.instance2;" vertex="1" parent="data-ingestion">
+          <mxGeometry x="40" y="60" width="48" height="48" as="geometry" />
+        </mxCell>
+        
+        <!-- Kinesis Data Stream -->
+        <mxCell id="kinesis-stream" value="Kinesis Data Stream" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.kinesis;" vertex="1" parent="data-ingestion">
+          <mxGeometry x="160" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Kinesis Firehose -->
+        <mxCell id="kinesis-firehose" value="Kinesis Firehose" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.kinesis_data_firehose;" vertex="1" parent="data-ingestion">
+          <mxGeometry x="160" y="180" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- S3 Bucket -->
+        <mxCell id="s3-bucket" value="S3 Bucket" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="data-ingestion">
+          <mxGeometry x="240" y="180" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Processing & Storage Group -->
+        <mxCell id="processing-storage" value="Processing &amp; Storage" style="fillColor=#EFF0F3;strokeColor=#D4D4D4;dashed=1;verticalAlign=top;fontStyle=0;fontColor=#232F3E;rounded=1;arcSize=10;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="400" y="60" width="320" height="280" as="geometry" />
+        </mxCell>
+        
+        <!-- Lambda Function -->
+        <mxCell id="lambda-function" value="Lambda Function" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="processing-storage">
+          <mxGeometry x="120" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- DynamoDB Table -->
+        <mxCell id="dynamodb-table" value="DynamoDB Table" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="processing-storage">
+          <mxGeometry x="40" y="180" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- API Gateway -->
+        <mxCell id="api-gateway" value="API Gateway" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="processing-storage">
+          <mxGeometry x="200" y="180" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Event Processing Group -->
+        <mxCell id="event-processing" value="Event Processing" style="fillColor=#EFF0F3;strokeColor=#D4D4D4;dashed=1;verticalAlign=top;fontStyle=0;fontColor=#232F3E;rounded=1;arcSize=10;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="760" y="60" width="320" height="280" as="geometry" />
+        </mxCell>
+        
+        <!-- EventBridge Bus -->
+        <mxCell id="eventbridge-bus" value="EventBridge Bus" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#FF4F8B;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;" vertex="1" parent="event-processing">
+          <mxGeometry x="40" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- EventBridge Rule -->
+        <mxCell id="eventbridge-rule" value="EventBridge Rule" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#FF4F8B;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.rule_2;" vertex="1" parent="event-processing">
+          <mxGeometry x="160" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- SQS Queue -->
+        <mxCell id="sqs-queue" value="SQS Queue" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#FF4F8B;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sqs;" vertex="1" parent="event-processing">
+          <mxGeometry x="120" y="180" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Dead Letter Queue -->
+        <mxCell id="dlq" value="Dead Letter Queue" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#FF4F8B;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sqs;" vertex="1" parent="event-processing">
+          <mxGeometry x="40" y="180" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- SNS Topic -->
+        <mxCell id="sns-topic" value="SNS Topic" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#FF4F8B;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sns;" vertex="1" parent="event-processing">
+          <mxGeometry x="240" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Security & Networking Group -->
+        <mxCell id="security-networking" value="Security &amp; Networking" style="fillColor=#EFF0F3;strokeColor=#D4D4D4;dashed=1;verticalAlign=top;fontStyle=0;fontColor=#232F3E;rounded=1;arcSize=10;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="40" y="380" width="1040" height="160" as="geometry" />
+        </mxCell>
+        
+        <!-- VPC -->
+        <mxCell id="vpc" value="VPC" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.vpc;" vertex="1" parent="security-networking">
+          <mxGeometry x="200" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- IAM Roles -->
+        <mxCell id="iam-roles" value="IAM Roles/Policies" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.identity_and_access_management;" vertex="1" parent="security-networking">
+          <mxGeometry x="480" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Security Groups -->
+        <mxCell id="security-groups" value="Security Groups" style="outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.security_group;" vertex="1" parent="security-networking">
+          <mxGeometry x="760" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- External Systems Group -->
+        <mxCell id="external-systems" value="External Systems" style="fillColor=#f5f5f5;strokeColor=#666666;dashed=1;verticalAlign=top;fontStyle=0;fontColor=#333333;rounded=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="600" width="1080" height="160" as="geometry" />
+        </mxCell>
+        
+        <!-- Client Applications -->
+        <mxCell id="client-apps" value="Client Applications" style="outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3E;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.client;" vertex="1" parent="external-systems">
+          <mxGeometry x="320" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Monitoring Systems -->
+        <mxCell id="monitoring-systems" value="Monitoring Systems" style="outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3E;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.monitoring;" vertex="1" parent="external-systems">
+          <mxGeometry x="680" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Connections -->
+        <!-- Producer Apps to Kinesis Stream -->
+        <mxCell id="producer-to-kinesis" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="producer-apps" target="kinesis-stream">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="producer-to-kinesis-label" value="Stream Data" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="producer-to-kinesis">
+          <mxGeometry x="-0.3" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Kinesis Stream to Firehose -->
+        <mxCell id="kinesis-to-firehose" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="kinesis-stream" target="kinesis-firehose">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kinesis-to-firehose-label" value="Batch Processing" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="kinesis-to-firehose">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Firehose to S3 -->
+        <mxCell id="firehose-to-s3" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="kinesis-firehose" target="s3-bucket">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="firehose-to-s3-label" value="Store" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="firehose-to-s3">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Kinesis Stream to Lambda -->
+        <mxCell id="kinesis-to-lambda" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="kinesis-stream" target="lambda-function">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kinesis-to-lambda-label" value="Real-time Processing" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="kinesis-to-lambda">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Lambda to DynamoDB -->
+        <mxCell id="lambda-to-dynamodb" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="lambda-function" target="dynamodb-table">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lambda-to-dynamodb-label" value="Store Results" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="lambda-to-dynamodb">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Lambda to API Gateway -->
+        <mxCell id="lambda-to-api" value="" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="lambda-function" target="api-gateway">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lambda-to-api-label" value="API Access" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="lambda-to-api">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- EventBridge Bus to Rule -->
+        <mxCell id="eventbus-to-rule" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="eventbridge-bus" target="eventbridge-rule">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eventbus-to-rule-label" value="Route Events" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="eventbus-to-rule">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- EventBridge Rule to SQS -->
+        <mxCell id="rule-to-sqs" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="eventbridge-rule" target="sqs-queue">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rule-to-sqs-label" value="Deliver Messages" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rule-to-sqs">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- SQS to DLQ -->
+        <mxCell id="sqs-to-dlq" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="sqs-queue" target="dlq">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sqs-to-dlq-label" value="Dead Letters" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="sqs-to-dlq">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- EventBridge Rule to SNS -->
+        <mxCell id="rule-to-sns" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="eventbridge-rule" target="sns-topic">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rule-to-sns-label" value="Notifications" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="rule-to-sns">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- SNS to SQS -->
+        <mxCell id="sns-to-sqs" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="sns-topic" target="sqs-queue">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sns-to-sqs-label" value="Subscribe" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="sns-to-sqs">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Client Apps to API -->
+        <mxCell id="clients-to-api" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="client-apps" target="api-gateway">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="clients-to-api-label" value="API Requests" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="clients-to-api">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Client Apps to EventBridge -->
+        <mxCell id="clients-to-eventbus" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="client-apps" target="eventbridge-bus">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="clients-to-eventbus-label" value="Produce Events" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="clients-to-eventbus">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Monitoring to Kinesis -->
+        <mxCell id="monitoring-to-kinesis" value="" style="endArrow=classic;html=1;strokeColor=#232F3E;" edge="1" parent="1" source="monitoring-systems" target="kinesis-stream">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="370" as="sourcePoint" />
+            <mxPoint x="210" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="monitoring-to-kinesis-label" value="Monitor" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="monitoring-to-kinesis">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

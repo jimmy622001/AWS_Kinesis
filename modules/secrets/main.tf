@@ -2,7 +2,7 @@
 resource "aws_secretsmanager_secret" "rancher_password" {
   name        = "${var.project_name}-rancher-password"
   description = "Bootstrap password for Rancher management"
-  
+
   tags = {
     Name = "${var.project_name}-rancher-password"
   }
@@ -16,7 +16,7 @@ resource "aws_secretsmanager_secret_version" "rancher_password" {
 resource "aws_secretsmanager_secret" "grafana_password" {
   name        = "${var.project_name}-grafana-password"
   description = "Admin password for Grafana"
-  
+
   tags = {
     Name = "${var.project_name}-grafana-password"
   }
@@ -30,7 +30,7 @@ resource "aws_secretsmanager_secret_version" "grafana_password" {
 resource "aws_secretsmanager_secret" "rds_password" {
   name        = "${var.project_name}-rds-password"
   description = "Master password for RDS database"
-  
+
   tags = {
     Name = "${var.project_name}-rds-password"
   }

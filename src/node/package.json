@@ -1,0 +1,24 @@
+{
+  "name": "aws-kinesis-project",
+  "version": "1.0.0",
+  "description": "AWS Kinesis Data Processing Project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "keywords": [
+    "aws",
+    "kinesis",
+    "terraform",
+    "data-processing"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1485.0"
+  }
+}
