@@ -22,11 +22,29 @@ resource "aws_codecommit_repository" "main" {
   description     = "Repository for ${var.project_name}"
 }
 
+# KMS Key for CodeBuild encryption
+resource "aws_kms_key" "codebuild" {
+  description = "KMS key for CodeBuild project encryption"
+}
+
+resource "aws_kms_alias" "codebuild" {
+  name          = "alias/${var.project_name}-codebuild"
+  target_key_id = aws_kms_key.codebuild.key_id
+}
+
+# CloudWatch Log Group for CodeBuild
+resource "aws_cloudwatch_log_group" "codebuild" {
+  name              = "/aws/codebuild/${var.project_name}-build"
+  retention_in_days = 365
+  kms_key_id        = aws_kms_key.codebuild.arn
+}
+
 # CodeBuild Project
 resource "aws_codebuild_project" "main" {
-  name         = "${var.project_name}-build"
-  description  = "Build project for ${var.project_name}"
-  service_role = aws_iam_role.codebuild_role.arn
+  name          = "${var.project_name}-build"
+  description   = "Build project for ${var.project_name}"
+  service_role  = aws_iam_role.codebuild_role.arn
+  encryption_key = aws_kms_key.codebuild.arn
 
   artifacts {
     type = "CODEPIPELINE"
@@ -39,6 +57,12 @@ resource "aws_codebuild_project" "main" {
     image_pull_credentials_type = "CODEBUILD"
   }
 
+  logs_config {
+    cloudwatch_logs {
+      group_name = aws_cloudwatch_log_group.codebuild.name
+    }
+  }
+
   source {
     type      = "CODEPIPELINE"
     buildspec = "buildspec.yml"
@@ -46,6 +70,16 @@ resource "aws_codebuild_project" "main" {
 }
 
 
+
+# KMS Key for CodePipeline artifacts
+resource "aws_kms_key" "codepipeline" {
+  description = "KMS key for CodePipeline artifact encryption"
+}
+
+resource "aws_kms_alias" "codepipeline" {
+  name          = "alias/${var.project_name}-codepipeline"
+  target_key_id = aws_kms_key.codepipeline.key_id
+}
 
 # CodePipeline
 resource "aws_codepipeline" "main" {
@@ -55,6 +89,11 @@ resource "aws_codepipeline" "main" {
   artifact_store {
     location = aws_s3_bucket.codepipeline_artifacts.bucket
     type     = "S3"
+    
+    encryption_key {
+      id   = aws_kms_key.codepipeline.arn
+      type = "KMS"
+    }
   }
 
   stage {
@@ -151,6 +190,14 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
           "codebuild:StartBuild"
         ]
         Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ]
+        Resource = aws_kms_key.codepipeline.arn
       }
     ]
   })
@@ -187,7 +234,10 @@ resource "aws_iam_role_policy" "codebuild_policy" {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ]
-        Resource = "arn:aws:logs:*:*:*"
+        Resource = [
+          aws_cloudwatch_log_group.codebuild.arn,
+          "${aws_cloudwatch_log_group.codebuild.arn}:*"
+        ]
       },
       {
         Effect = "Allow"
@@ -199,6 +249,17 @@ resource "aws_iam_role_policy" "codebuild_policy" {
         Resource = [
           aws_s3_bucket.codepipeline_artifacts.arn,
           "${aws_s3_bucket.codepipeline_artifacts.arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ]
+        Resource = [
+          aws_kms_key.codebuild.arn,
+          aws_kms_key.codepipeline.arn
         ]
       }
     ]
