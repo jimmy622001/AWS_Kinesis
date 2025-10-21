@@ -24,7 +24,8 @@ resource "aws_codecommit_repository" "main" {
 
 # KMS Key for CodeBuild encryption
 resource "aws_kms_key" "codebuild" {
-  description = "KMS key for CodeBuild project encryption"
+  description             = "KMS key for CodeBuild project encryption"
+  enable_key_rotation     = true
 }
 
 resource "aws_kms_alias" "codebuild" {
@@ -73,7 +74,8 @@ resource "aws_codebuild_project" "main" {
 
 # KMS Key for CodePipeline artifacts
 resource "aws_kms_key" "codepipeline" {
-  description = "KMS key for CodePipeline artifact encryption"
+  description             = "KMS key for CodePipeline artifact encryption"
+  enable_key_rotation     = true
 }
 
 resource "aws_kms_alias" "codepipeline" {

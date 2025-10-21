@@ -8,6 +8,60 @@ resource "aws_ecs_cluster" "main" {
   }
 }
 
+# Self-signed certificate for evaluation
+resource "tls_private_key" "example" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "tls_self_signed_cert" "example" {
+  private_key_pem = tls_private_key.example.private_key_pem
+
+  subject {
+    common_name  = "${var.project_name}.example.com"
+    organization = "Example Organization"
+  }
+
+  validity_period_hours = 8760 # 1 year
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "server_auth",
+  ]
+}
+
+resource "aws_acm_certificate" "example" {
+  private_key      = tls_private_key.example.private_key_pem
+  certificate_body = tls_self_signed_cert.example.cert_pem
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# S3 Bucket for ALB Access Logs
+resource "aws_s3_bucket" "alb_logs" {
+  bucket = "${var.project_name}-alb-logs-${random_string.bucket_suffix.result}"
+}
+
+resource "random_string" "bucket_suffix" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
+# KMS Key for CloudWatch Logs
+resource "aws_kms_key" "logs" {
+  description             = "KMS key for CloudWatch logs encryption"
+  enable_key_rotation     = true
+}
+
+resource "aws_kms_alias" "logs" {
+  name          = "alias/${var.project_name}-logs"
+  target_key_id = aws_kms_key.logs.key_id
+}
+
 # Application Load Balancer
 resource "aws_lb" "main" {
   name               = "${var.project_name}-alb"
@@ -16,7 +70,13 @@ resource "aws_lb" "main" {
   security_groups    = [var.security_group_id]
   subnets            = var.public_subnet_ids
 
-  enable_deletion_protection = false
+  enable_deletion_protection = true
+  drop_invalid_header_fields = true
+
+  access_logs {
+    bucket  = aws_s3_bucket.alb_logs.bucket
+    enabled = true
+  }
 }
 
 resource "aws_lb_target_group" "main" {
@@ -39,14 +99,34 @@ resource "aws_lb_target_group" "main" {
   }
 }
 
-resource "aws_lb_listener" "main" {
+# HTTPS Listener with self-signed certificate
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = aws_acm_certificate.example.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.main.arn
+  }
+}
+
+# HTTP to HTTPS redirect
+resource "aws_lb_listener" "http_redirect" {
   load_balancer_arn = aws_lb.main.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.main.arn
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
   }
 }
 
@@ -62,8 +142,9 @@ resource "aws_ecs_task_definition" "main" {
 
   container_definitions = jsonencode([
     {
-      name  = "${var.project_name}-container"
-      image = "nginx:latest"
+      name      = "${var.project_name}-container"
+      image     = "nginx:latest"
+      readonlyRootFilesystem = true
       portMappings = [
         {
           containerPort = 80
@@ -136,7 +217,8 @@ resource "aws_appautoscaling_policy" "ecs_policy_up" {
 # CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "ecs" {
   name              = "/ecs/${var.project_name}"
-  retention_in_days = 7
+  retention_in_days = 365
+  kms_key_id        = aws_kms_key.logs.arn
 }
 
 # EKS Cluster
@@ -146,9 +228,9 @@ resource "aws_eks_cluster" "main" {
   version  = "1.32"
 
   vpc_config {
-    subnet_ids              = concat(var.public_subnet_ids, var.private_subnet_ids)
+    subnet_ids              = var.private_subnet_ids
     endpoint_private_access = true
-    endpoint_public_access  = true
+    endpoint_public_access  = false
     security_group_ids      = [aws_security_group.eks_cluster.id]
   }
 
@@ -347,7 +429,7 @@ resource "aws_lb_target_group" "rancher" {
 
 # Rancher ALB Listener Rule
 resource "aws_lb_listener_rule" "rancher" {
-  listener_arn = aws_lb_listener.main.arn
+  listener_arn = aws_lb_listener.https.arn
   priority     = 200
 
   action {
@@ -396,7 +478,8 @@ resource "aws_security_group" "rancher" {
 # Rancher CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "rancher" {
   name              = "/ecs/${var.project_name}-rancher"
-  retention_in_days = 7
+  retention_in_days = 365
+  kms_key_id        = aws_kms_key.logs.arn
 }
 
 data "aws_region" "current" {}
