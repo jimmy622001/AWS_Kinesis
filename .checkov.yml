@@ -1,0 +1,15 @@
+directory:
+  - .
+download-external-modules: true
+framework:
+  - terraform
+skip-check:
+  - CKV_AWS_144  # Ensure that S3 bucket has cross-region replication enabled
+  - CKV_AWS_145  # Ensure that S3 buckets are encrypted with KMS by default
+quiet: true
+compact: true
+output: cli
+skip-path:
+  - ".terraform"
+  - ".git"
+  - "**/.terraform/*"

@@ -87,6 +87,8 @@ Designed for **microsecond-latency trading systems** with **99.99% uptime** requ
 1. AWS CLI configured with appropriate credentials
 2. Terraform >= 1.0 installed
 3. Sufficient AWS permissions for resource creation
+4. Node.js >= 20.6.0 for scripts
+5. Pre-commit installed for security scanning (see [Security Tools Installation Guide](docs/security/installation-guide.md))
 
 ### Step 1: Initialize Terraform
 
@@ -248,6 +250,9 @@ kubectl apply -f trading-app.yaml
 - **Monitoring**: CloudTrail, VPC Flow Logs, and X-Ray tracing
 - **Backup**: Automated backup strategies with encryption
 - **Configuration Security**: No hardcoded passwords in Terraform code
+- **Infrastructure Security Scanning**: Automated analysis with multiple tools
+- **Pre-commit Hooks**: Security checks during development
+- **CI/CD Security Integration**: Continuous security verification
 
 ## Troubleshooting Guide
 
@@ -369,5 +374,33 @@ For a detailed, interactive version of this architecture diagram:
 
 ![Layout Image](docs/images/layout_image.png)
 ![AWS Kinesis Layout](docs/images/aws_kinesis_layout.png)
+
+## Security Scanning Tools
+
+This project includes multiple security scanning tools to ensure infrastructure code quality and security:
+
+### Implemented Tools
+
+- **Checkov**: Scans for cloud misconfigurations and security issues
+- **TFLint**: Validates Terraform code quality and AWS best practices
+- **KICS**: Finds security vulnerabilities and compliance issues
+- **Terrascan**: Policy-as-code security scanner
+
+### Using the Security Tools
+
+```bash
+# Run security scans locally
+./scripts/security-scan.sh
+
+# Set up pre-commit hooks
+pre-commit install
+```
+
+### Security Documentation
+
+- [Terraform Security Tools Overview](docs/security/terraform-security-tools.md)
+- [Security Tools Installation Guide](docs/security/installation-guide.md)
+
+All security scans are automatically run in CI/CD pipelines with results available in GitHub Actions.
 
 
