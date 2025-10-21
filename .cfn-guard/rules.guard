@@ -1,0 +1,59 @@
+# CloudFormation Guard Rules for Additional Security Checks
+
+# S3 Bucket Security
+rule s3_bucket_public_access_prohibited {
+    AWS::S3::Bucket {
+        Properties {
+            PublicAccessBlockConfiguration exists
+            PublicAccessBlockConfiguration {
+                BlockPublicAcls == true
+                BlockPublicPolicy == true
+                IgnorePublicAcls == true
+                RestrictPublicBuckets == true
+            }
+        }
+    }
+}
+
+# KMS Key Policies
+rule kms_key_rotation_enabled {
+    AWS::KMS::Key {
+        Properties {
+            EnableKeyRotation == true
+        }
+    }
+}
+
+# ECS Task Definition Security
+rule ecs_task_definition_nonroot_user {
+    AWS::ECS::TaskDefinition {
+        Properties {
+            ContainerDefinitions[*] {
+                User exists
+                User != "root"
+                User != "0"
+            }
+        }
+    }
+}
+
+# ALB Security Headers
+rule alb_drop_invalid_headers {
+    AWS::ElasticLoadBalancingV2::LoadBalancer {
+        Properties {
+            LoadBalancerAttributes[*] {
+                Key == "routing.http.drop_invalid_header_fields.enabled"
+                Value == "true"
+            }
+        }
+    }
+}
+
+# CloudWatch Logs Encryption
+rule cloudwatch_logs_encrypted {
+    AWS::Logs::LogGroup {
+        Properties {
+            KmsKeyId exists
+        }
+    }
+}

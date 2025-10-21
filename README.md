@@ -385,6 +385,7 @@ This project includes multiple security scanning tools to ensure infrastructure 
 - **TFLint**: Validates Terraform code quality and AWS best practices
 - **KICS**: Finds security vulnerabilities and compliance issues
 - **Terrascan**: Policy-as-code security scanner
+- **CloudFormation Guard**: Policy-as-code validation with custom rules
 
 ### Using the Security Tools
 
@@ -392,9 +393,33 @@ This project includes multiple security scanning tools to ensure infrastructure 
 # Run security scans locally
 ./scripts/security-scan.sh
 
+# Run CloudFormation Guard validation
+.\guard-validate.ps1
+
 # Set up pre-commit hooks
 pre-commit install
 ```
+
+### CloudFormation Guard Integration
+
+CloudFormation Guard provides additional policy validation with custom organizational rules:
+
+- **Custom Rules**: Organization-specific security policies in `.cfn-guard/rules.guard`
+- **Policy as Code**: Version-controlled security policies
+- **Compliance Validation**: Structured validation output for audit trails
+- **Pre-deployment Checks**: Catch policy violations before infrastructure deployment
+
+```powershell
+# Validate infrastructure against custom policies
+.\guard-validate.ps1
+```
+
+**Guard Rules Include:**
+- S3 bucket public access blocking
+- KMS key rotation enforcement
+- ECS container security (non-root users)
+- ALB security headers validation
+- CloudWatch logs encryption requirements
 
 ### Security Documentation
 
