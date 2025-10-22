@@ -104,6 +104,14 @@ resource "aws_db_instance" "main" {
   monitoring_interval = 60
   monitoring_role_arn = aws_iam_role.rds_enhanced_monitoring.arn
 
+  iam_database_authentication_enabled = true
+  
+  enabled_cloudwatch_logs_exports = [
+    "error",
+    "general",
+    "slow_query"
+  ]
+
   skip_final_snapshot = true
   deletion_protection = true
 
@@ -116,20 +124,15 @@ resource "aws_db_instance" "main" {
 # RDS Security Group
 resource "aws_security_group" "rds" {
   name_prefix = "${var.project_name}-rds-"
+  description = "Security group for RDS MySQL database"
   vpc_id      = var.vpc_id
 
   ingress {
+    description = "MySQL access from VPC"
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {

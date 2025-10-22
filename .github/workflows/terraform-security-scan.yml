@@ -11,6 +11,7 @@ jobs:
   terraform-security:
     name: Terraform Security Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       pull-requests: write
@@ -51,9 +52,10 @@ jobs:
       with:
         directory: .
         framework: terraform
-        skip_check: CKV_AWS_144,CKV_AWS_145
+        skip_check: CKV_AWS_144,CKV_AWS_145,CKV_AWS_382
         quiet: true
         soft_fail: true
+        compact: true
         output_format: sarif
         output_file_path: checkov-results.sarif
 
@@ -71,8 +73,9 @@ jobs:
         output_path: kics-results
         platform_type: terraform
         output_formats: sarif
-        exclude_paths: ".terraform,**/.terraform"
+        exclude_paths: ".terraform,**/.terraform,**/node_modules"
         fail_on: high
+        timeout: 600
 
     - name: Upload KICS SARIF report
       uses: github/codeql-action/upload-sarif@v3

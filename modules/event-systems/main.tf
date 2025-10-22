@@ -1,8 +1,22 @@
+# KMS Key for Event Systems
+resource "aws_kms_key" "events" {
+  description         = "KMS key for event systems encryption"
+  enable_key_rotation = true
+}
+
+resource "aws_kms_alias" "events" {
+  name          = "alias/${var.project_name}-events"
+  target_key_id = aws_kms_key.events.key_id
+}
+
 # Kinesis Data Stream - Optimized for Trading
 resource "aws_kinesis_stream" "main" {
   name             = "${var.project_name}-stream"
   shard_count      = 10  # Higher throughput for market data
   retention_period = 168 # 7 days for compliance
+
+  encryption_type = "KMS"
+  kms_key_id      = aws_kms_key.events.arn
 
   shard_level_metrics = [
     "IncomingRecords",
@@ -19,6 +33,12 @@ resource "aws_kinesis_firehose_delivery_stream" "main" {
   name        = "${var.project_name}-firehose"
   destination = "extended_s3"
 
+  server_side_encryption {
+    enabled  = true
+    key_type = "CUSTOMER_MANAGED_CMK"
+    key_arn  = aws_kms_key.events.arn
+  }
+
   extended_s3_configuration {
     role_arn   = aws_iam_role.firehose_role.arn
     bucket_arn = aws_s3_bucket.firehose_bucket.arn
@@ -28,6 +48,7 @@ resource "aws_kinesis_firehose_delivery_stream" "main" {
     buffering_interval = 300
 
     compression_format = "GZIP"
+    kms_key_arn       = aws_kms_key.events.arn
   }
 }
 
@@ -81,6 +102,14 @@ resource "aws_iam_role_policy" "firehose_policy" {
           aws_s3_bucket.firehose_bucket.arn,
           "${aws_s3_bucket.firehose_bucket.arn}/*"
         ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ]
+        Resource = aws_kms_key.events.arn
       }
     ]
   })
@@ -111,6 +140,9 @@ resource "aws_sqs_queue" "main" {
   receive_wait_time_seconds  = 0       # No long polling
   visibility_timeout_seconds = 30
 
+  kms_master_key_id                 = aws_kms_key.events.arn
+  kms_data_key_reuse_period_seconds = 300
+
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.dlq.arn
     maxReceiveCount     = 4
@@ -119,7 +151,9 @@ resource "aws_sqs_queue" "main" {
 
 # Dead Letter Queue
 resource "aws_sqs_queue" "dlq" {
-  name = "${var.project_name}-dlq"
+  name                              = "${var.project_name}-dlq"
+  kms_master_key_id                 = aws_kms_key.events.arn
+  kms_data_key_reuse_period_seconds = 300
 }
 
 # SNS Topic
