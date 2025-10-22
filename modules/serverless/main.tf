@@ -97,7 +97,7 @@ import os
 def handler(event, context):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
-    
+
     # Simple CRUD operations for learning
     if event.get('action') == 'put':
         table.put_item(Item=event['item'])

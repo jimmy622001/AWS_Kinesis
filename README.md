@@ -151,8 +151,7 @@ This project includes multiple security scanning tools to ensure infrastructure 
 .\guard-validate.ps1
 
 # Set up pre-commit hooks
-pre-commit install
-```
+   pre-commit install
 
 ### CloudFormation Guard Integration
 

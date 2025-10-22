@@ -168,7 +168,7 @@ For GitHub repositories, ensure branch protection rules are set up:
 ### Common Issues
 
 1. **Pre-commit errors during installation**
-   
+
    If you encounter Python-related errors, ensure you have the correct Python version:
    ```bash
    python --version  # Should be 3.7+

@@ -107,6 +107,7 @@ module "disaster_recovery" {
   private_subnet_ids = module.networking.private_subnet_ids
   kms_key_arn        = module.security.kms_key_id
   project_name       = var.project_name
+  aws_region         = var.aws_region
 }
 
 module "observability" {
