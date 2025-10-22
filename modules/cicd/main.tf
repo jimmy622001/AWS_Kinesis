@@ -24,8 +24,8 @@ resource "aws_codecommit_repository" "main" {
 
 # KMS Key for CodeBuild encryption
 resource "aws_kms_key" "codebuild" {
-  description             = "KMS key for CodeBuild project encryption"
-  enable_key_rotation     = true
+  description         = "KMS key for CodeBuild project encryption"
+  enable_key_rotation = true
 }
 
 resource "aws_kms_alias" "codebuild" {
@@ -42,9 +42,9 @@ resource "aws_cloudwatch_log_group" "codebuild" {
 
 # CodeBuild Project
 resource "aws_codebuild_project" "main" {
-  name          = "${var.project_name}-build"
-  description   = "Build project for ${var.project_name}"
-  service_role  = aws_iam_role.codebuild_role.arn
+  name           = "${var.project_name}-build"
+  description    = "Build project for ${var.project_name}"
+  service_role   = aws_iam_role.codebuild_role.arn
   encryption_key = aws_kms_key.codebuild.arn
 
   artifacts {
@@ -74,8 +74,8 @@ resource "aws_codebuild_project" "main" {
 
 # KMS Key for CodePipeline artifacts
 resource "aws_kms_key" "codepipeline" {
-  description             = "KMS key for CodePipeline artifact encryption"
-  enable_key_rotation     = true
+  description         = "KMS key for CodePipeline artifact encryption"
+  enable_key_rotation = true
 }
 
 resource "aws_kms_alias" "codepipeline" {
@@ -91,7 +91,7 @@ resource "aws_codepipeline" "main" {
   artifact_store {
     location = aws_s3_bucket.codepipeline_artifacts.bucket
     type     = "S3"
-    
+
     encryption_key {
       id   = aws_kms_key.codepipeline.arn
       type = "KMS"

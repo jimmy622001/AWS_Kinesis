@@ -18,11 +18,6 @@ output "lambda_function_name" {
   value       = module.serverless.lambda_function_name
 }
 
-output "ecs_cluster_name" {
-  description = "Name of the ECS cluster"
-  value       = module.containers.ecs_cluster_name
-}
-
 output "kinesis_stream_name" {
   description = "Name of the Kinesis stream"
   value       = module.event_systems.kinesis_stream_name
@@ -33,22 +28,22 @@ output "eventbridge_bus_name" {
   value       = module.event_systems.eventbridge_bus_name
 }
 
-output "prometheus_url" {
-  description = "Prometheus URL (via ALB)"
-  value       = "http://${module.containers.load_balancer_dns}/prometheus"
-}
-
-output "grafana_url" {
-  description = "Grafana URL (via ALB)"
-  value       = "http://${module.containers.load_balancer_dns}/grafana"
-}
-
 output "eks_cluster_name" {
   description = "Name of the EKS cluster"
   value       = module.containers.eks_cluster_name
 }
 
-output "rancher_url" {
-  description = "Rancher management URL"
-  value       = module.containers.rancher_url
+output "eks_cluster_endpoint" {
+  description = "EKS cluster endpoint"
+  value       = module.containers.eks_cluster_endpoint
+}
+
+output "eks_cluster_arn" {
+  description = "EKS cluster ARN"
+  value       = module.containers.eks_cluster_arn
+}
+
+output "cluster_autoscaler_role_arn" {
+  description = "Cluster Autoscaler IAM role ARN"
+  value       = module.containers.cluster_autoscaler_role_arn
 }

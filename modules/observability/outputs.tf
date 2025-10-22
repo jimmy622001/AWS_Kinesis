@@ -1,19 +1,14 @@
-output "prometheus_service_name" {
-  description = "Name of the Prometheus ECS service"
-  value       = aws_ecs_service.prometheus.name
+output "efs_file_system_id" {
+  description = "ID of the EFS file system for observability"
+  value       = aws_efs_file_system.observability.id
 }
 
-output "grafana_service_name" {
-  description = "Name of the Grafana ECS service"
-  value       = aws_ecs_service.grafana.name
+output "efs_security_group_id" {
+  description = "ID of the EFS security group"
+  value       = aws_security_group.efs.id
 }
 
-output "prometheus_target_group_arn" {
-  description = "ARN of the Prometheus target group"
-  value       = aws_lb_target_group.prometheus.arn
-}
-
-output "grafana_target_group_arn" {
-  description = "ARN of the Grafana target group"
-  value       = aws_lb_target_group.grafana.arn
+output "cloudwatch_log_group_name" {
+  description = "Name of the CloudWatch log group"
+  value       = aws_cloudwatch_log_group.eks_observability.name
 }

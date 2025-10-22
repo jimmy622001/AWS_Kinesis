@@ -21,10 +21,10 @@ Production-ready trading infrastructure with ultra-low latency architecture, reg
 - Lambda functions with X-Ray tracing
 
 **Container Orchestration**
-- ECS Fargate for serverless containers
-- EKS cluster with managed node groups
-- Rancher for multi-cluster management
-- Application Load Balancer with auto-scaling
+- EKS cluster with managed node groups and auto-scaling
+- Cluster Autoscaler for automatic node scaling
+- EKS addons (VPC CNI, CoreDNS, Kube-proxy)
+- OIDC provider for service account integration
 
 **Data & Storage**
 - RDS Multi-AZ for high availability
@@ -71,27 +71,56 @@ terraform plan
 terraform apply
 ```
 
-### Step 5: Access Services
+### Step 5: Access EKS Cluster
 
-- **Grafana**: http://ALB-DNS/grafana (admin/admin123)
-- **Rancher**: http://ALB-DNS/rancher (admin/admin123)
-- **Prometheus**: http://ALB-DNS/prometheus
+```bash
+# Configure kubectl
+aws eks update-kubeconfig --region <your-region> --name <project-name>-eks
+
+# Verify cluster access
+kubectl get nodes
+kubectl get pods --all-namespaces
+```
 
 ## Key Features
 
 - **Ultra-Low Latency**: Sub-millisecond networking with enhanced instances
 - **High Availability**: Multi-AZ deployment with automated failover
-- **Security**: KMS encryption, WAF protection, VPC isolation
-- **Monitoring**: Real-time dashboards and alerting
-- **Scalability**: Auto-scaling containers and serverless functions
+- **Security**: KMS encryption, VPC isolation, OIDC integration
+- **Monitoring**: CloudWatch logs with comprehensive cluster logging
+- **Auto-Scaling**: Cluster Autoscaler with dynamic node scaling (1-10 nodes)
 - **Compliance**: Audit trails and regulatory reporting
 
-## EKS Configuration
+## EKS Auto-Scaling Configuration
+
+The EKS cluster is configured with automatic scaling capabilities:
+
+### Cluster Autoscaler
+- Automatically scales worker nodes based on pod resource requirements
+- Scales from 1 to 10 nodes based on demand
+- Uses OIDC provider for secure service account authentication
+
+### Node Group Configuration
+- **Instance Type**: t3.medium
+- **Capacity Type**: On-Demand
+- **Min Size**: 1 node
+- **Max Size**: 10 nodes
+- **Desired Size**: 2 nodes
+
+### EKS Addons
+- **VPC CNI**: Advanced networking for pods
+- **CoreDNS**: DNS resolution within the cluster
+- **Kube-proxy**: Network proxy for Kubernetes services
 
 ```bash
-# Configure kubectl
-aws eks update-kubeconfig --region us-east-1 --name aws-learning-eks
-kubectl get nodes
+# Deploy Cluster Autoscaler
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+
+# Annotate the deployment
+kubectl -n kube-system annotate deployment.apps/cluster-autoscaler cluster-autoscaler.kubernetes.io/safe-to-evict="false"
+
+# Edit deployment to add cluster name
+kubectl -n kube-system edit deployment.apps/cluster-autoscaler
 ```
 
 ## Cleanup

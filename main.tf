@@ -73,13 +73,11 @@ module "serverless" {
 module "containers" {
   source = "./modules/containers"
 
-  vpc_id                 = module.networking.vpc_id
-  public_subnet_ids      = module.networking.public_subnet_ids
-  private_subnet_ids     = module.networking.private_subnet_ids
-  security_group_id      = module.security.ecs_security_group_id
-  ecs_execution_role_arn = module.security.ecs_execution_role_arn
-  ecs_task_role_arn      = module.security.ecs_task_role_arn
-  project_name           = var.project_name
+  vpc_id             = module.networking.vpc_id
+  public_subnet_ids  = module.networking.public_subnet_ids
+  private_subnet_ids = module.networking.private_subnet_ids
+  security_group_id  = module.security.eks_security_group_id
+  project_name       = var.project_name
 }
 
 module "event_systems" {
@@ -114,12 +112,8 @@ module "disaster_recovery" {
 module "observability" {
   source = "./modules/observability"
 
-  vpc_id                 = module.networking.vpc_id
-  private_subnet_ids     = module.networking.private_subnet_ids
-  ecs_cluster_id         = module.containers.ecs_cluster_id
-  ecs_execution_role_arn = module.security.ecs_execution_role_arn
-  ecs_task_role_arn      = module.security.ecs_task_role_arn
-  alb_security_group_id  = module.security.alb_security_group_id
-  alb_listener_arn       = module.containers.alb_listener_arn
-  project_name           = var.project_name
+  vpc_id             = module.networking.vpc_id
+  private_subnet_ids = module.networking.private_subnet_ids
+  eks_cluster_name   = module.containers.eks_cluster_name
+  project_name       = var.project_name
 }

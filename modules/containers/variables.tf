@@ -14,17 +14,7 @@ variable "private_subnet_ids" {
 }
 
 variable "security_group_id" {
-  description = "Security group ID for ECS"
-  type        = string
-}
-
-variable "ecs_execution_role_arn" {
-  description = "ECS execution role ARN"
-  type        = string
-}
-
-variable "ecs_task_role_arn" {
-  description = "ECS task role ARN"
+  description = "Security group ID for EKS"
   type        = string
 }
 
