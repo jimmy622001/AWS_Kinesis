@@ -86,10 +86,24 @@ kubectl get pods --all-namespaces
 
 - **Ultra-Low Latency**: Sub-millisecond networking with enhanced instances
 - **High Availability**: Multi-AZ deployment with automated failover
+- **Disaster Recovery**: Cross-region pilot light DR with automated failover capabilities
 - **Security**: KMS encryption, VPC isolation, OIDC integration
 - **Monitoring**: CloudWatch logs with comprehensive cluster logging
 - **Auto-Scaling**: Cluster Autoscaler with dynamic node scaling (1-10 nodes)
 - **Compliance**: Audit trails and regulatory reporting
+
+## Disaster Recovery Configuration
+
+The project implements a cross-region disaster recovery strategy using a pilot light approach:
+
+- **Pilot Light Architecture**: Minimal infrastructure maintained in the DR region
+- **Cross-Region Replication**: Automated data replication between primary and DR regions
+- **Automated Failover**: Route 53 health checks and Lambda functions for automated failover
+- **Recovery Objectives**: RTO of 15-30 minutes, RPO of ~15 minutes
+- **Data Replication**: RDS read replicas, S3 CRR, DynamoDB global tables
+- **Automated Testing**: Regular DR drills using automated testing scripts
+
+See the [Multi-Region DR Strategy](docs/disaster-recovery/multi-region-dr-strategy.md) document for detailed implementation.
 
 ## EKS Auto-Scaling Configuration
 
@@ -182,6 +196,7 @@ Comprehensive documentation is available in the `docs/` folder with detailed gui
 
 ### Architecture
 - [Detailed Architecture Components](docs/architecture/detailed-components.md) - Complete infrastructure breakdown
+- [Multi-Region DR Strategy](docs/disaster-recovery/multi-region-dr-strategy.md) - Cross-region disaster recovery implementation
 
 ### Operations
 - [Trading System Exercises](docs/operations/trading-exercises.md) - Learning exercises and advanced implementation paths
