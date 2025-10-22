@@ -84,9 +84,10 @@ resource "aws_db_instance" "main" {
   storage_encrypted     = true
   kms_key_id            = var.kms_key_arn
 
-  engine         = "mysql"
-  engine_version = "8.0"
-  instance_class = "db.t3.micro"
+  engine                      = "mysql"
+  engine_version              = "8.0"
+  instance_class              = "db.t3.micro"
+  auto_minor_version_upgrade  = true
 
   db_name  = "learningdb"
   username = "admin"
@@ -100,8 +101,11 @@ resource "aws_db_instance" "main" {
   backup_window           = "03:00-04:00"
   maintenance_window      = "sun:04:00-sun:05:00"
 
+  monitoring_interval = 60
+  monitoring_role_arn = aws_iam_role.rds_enhanced_monitoring.arn
+
   skip_final_snapshot = true
-  deletion_protection = false
+  deletion_protection = true
 
   tags = {
     Name        = "${var.project_name}-database"
@@ -188,4 +192,27 @@ resource "aws_iam_role" "dlm_role" {
 resource "aws_iam_role_policy_attachment" "dlm_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSDataLifecycleManagerServiceRole"
   role       = aws_iam_role.dlm_role.name
+}
+
+# IAM Role for RDS Enhanced Monitoring
+resource "aws_iam_role" "rds_enhanced_monitoring" {
+  name = "${var.project_name}-rds-enhanced-monitoring"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "monitoring.rds.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+  role       = aws_iam_role.rds_enhanced_monitoring.name
 }

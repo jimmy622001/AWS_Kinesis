@@ -27,8 +27,16 @@ resource "aws_eks_cluster" "main" {
   vpc_config {
     subnet_ids              = var.private_subnet_ids
     endpoint_private_access = true
-    endpoint_public_access  = true
+    endpoint_public_access  = false
+    public_access_cidrs     = []
     security_group_ids      = [aws_security_group.eks_cluster.id]
+  }
+
+  encryption_config {
+    provider {
+      key_arn = aws_kms_key.logs.arn
+    }
+    resources = ["secrets"]
   }
 
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
@@ -78,13 +86,23 @@ resource "aws_eks_node_group" "main" {
 # EKS Security Group
 resource "aws_security_group" "eks_cluster" {
   name_prefix = "${var.project_name}-eks-cluster-"
+  description = "Security group for EKS cluster control plane"
   vpc_id      = var.vpc_id
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    description = "HTTPS to internet for EKS API"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Communication with worker nodes"
+    from_port   = 1025
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/8"]
   }
 
   tags = {
@@ -203,11 +221,26 @@ resource "aws_iam_policy" "cluster_autoscaler" {
           "autoscaling:DescribeAutoScalingGroups",
           "autoscaling:DescribeAutoScalingInstances",
           "autoscaling:DescribeLaunchConfigurations",
-          "autoscaling:DescribeTags",
-          "autoscaling:SetDesiredCapacity",
-          "autoscaling:TerminateInstanceInAutoScalingGroup",
-          "ec2:DescribeLaunchTemplateVersions"
+          "autoscaling:DescribeTags"
         ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "autoscaling:SetDesiredCapacity",
+          "autoscaling:TerminateInstanceInAutoScalingGroup"
+        ]
+        Resource = "arn:aws:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/${var.project_name}-*"
+        Condition = {
+          StringEquals = {
+            "autoscaling:ResourceTag/kubernetes.io/cluster/${var.project_name}-eks" = "owned"
+          }
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = "ec2:DescribeLaunchTemplateVersions"
         Resource = "*"
       }
     ]
