@@ -1,13 +1,14 @@
 # AWS Trading Platform - Usage Guide
 
-## Prerequisites
+## 📋 Prerequisites
 
-- AWS CLI configured with appropriate credentials
-- Terraform >= 1.0 installed
-- kubectl configured for EKS cluster access
-- jq for JSON processing (recommended)
+- **AWS Account** with appropriate IAM permissions
+- **AWS CLI** configured with credentials
+- **Terraform** >= 1.0
+- **kubectl** for Kubernetes cluster management
+- **jq** for JSON processing (recommended)
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Clone the Repository
 
@@ -33,21 +34,129 @@ cp terraform.tfvars.example terraform.tfvars
 
 ```bash
 # Review changes
-terraform plan
+terraform plan -out=tfplan
 
-# Apply changes
-terraform apply
+# Apply changes (takes 20-30 minutes)
+terraform apply "tfplan"
 ```
 
-## Accessing the Cluster
+## 🔍 Accessing the Cluster
 
 ### Configure kubectl
 
 ```bash
 aws eks update-kubeconfig \
-  --region <your-region> \
-  --name <project-name>-eks
+  --region $(terraform output -raw region) \
+  --name $(terraform output -raw cluster_name)
+```
 
+## 🛠️ Disaster Recovery Operations
+
+### Testing Failover
+
+1. **Initiate Failover Test**
+   ```bash
+   # Manually failover RDS (if applicable)
+   aws rds failover-db-cluster \
+     --db-cluster-identifier $(terraform output -raw db_cluster_identifier)
+   
+   # Verify DR environment scaling
+   aws eks describe-nodegroup \
+     --cluster-name $(terraform output -raw dr_cluster_name) \
+     --nodegroup-name $(terraform output -raw dr_nodegroup_name) \
+     --region $(terraform output -raw dr_region)
+   ```
+
+2. **Verify DNS Failover**
+   ```bash
+   dig +short $(terraform output -raw app_domain) CNAME
+   ```
+
+### Failback Procedure
+
+1. **Restore Primary Region**
+   ```bash
+   # Restore any affected services
+   # Verify data consistency
+   ```
+
+2. **Initiate Failback**
+   ```bash
+   # Update Route 53 to point back to primary
+   # Monitor traffic shift in CloudWatch
+   ```
+
+3. **Scale Down DR**
+   ```automatically handled by Lambda function
+   # Verify DR environment scales down
+   ```
+
+## 🔄 Maintenance
+
+### Updating the Cluster
+
+```bash
+# Make changes to Terraform files
+terraform plan -out=tfplan
+terraform apply "tfplan"
+
+# Update Kubernetes deployments
+kubectl apply -f k8s/
+```
+
+### Monitoring
+
+- **Kubernetes Dashboard**: `kubectl proxy`
+- **Prometheus/Grafana**: Access via port-forward or Ingress
+- **CloudWatch**: View logs and metrics in AWS Console
+
+## 🧪 Testing DR Readiness
+
+### Automated Testing
+
+```bash
+# Run DR test suite
+./scripts/test-dr-failover.sh
+
+# View test results
+kubectl logs -n monitoring dr-test-pod
+```
+
+### Manual Verification
+
+1. Check DR environment status:
+   ```bash
+   kubectl get nodes --context=dr-context
+   kubectl get pods --all-namespaces --context=dr-context
+   ```
+
+2. Verify data replication:
+   ```bash
+   # Check RDS replication lag
+   aws rds describe-db-instances \
+     --db-instance-identifier $(terraform output -raw dr_db_identifier) \
+     --query 'DBInstances[0].ReadReplicaDBInstanceIdentifiers'
+   ```
+
+## 🧹 Cleanup
+
+To destroy all resources (use with caution):
+
+```bash
+# First, delete Kubernetes resources
+kubectl delete all --all --all-namespaces
+
+# Then destroy Terraform resources
+terraform destroy
+```
+
+> **Warning**: This will permanently delete all resources. Ensure you have backups before proceeding.
+
+## 📚 Additional Resources
+
+- [AWS Disaster Recovery Documentation](https://aws.amazon.com/disaster-recovery/)
+- [EKS Best Practices](https://aws.github.io/aws-eks-best-practices/)
+- [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 # Verify access
 kubectl get nodes
 kubectl get pods --all-namespaces

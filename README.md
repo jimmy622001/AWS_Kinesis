@@ -1,103 +1,83 @@
-# AWS Trading Infrastructure with Terraform
+# AWS Trading Platform - High Availability & Disaster Recovery
 
-Production-ready trading infrastructure with ultra-low latency architecture, regulatory compliance, and enterprise-grade security.
+## 🚀 Next-Generation Trading Infrastructure
 
-## Architecture Overview
+A production-ready, cloud-native trading platform built on AWS with enterprise-grade disaster recovery capabilities. This solution combines ultra-low latency architecture with automated cross-region failover to ensure maximum uptime and data protection for mission-critical trading operations.
 
-### Core Components
+## 🌟 Key Features
 
-**Networking & Security**
-- Multi-AZ VPC with public/private subnets
-- Enhanced networking (SR-IOV, ENA) for low latency
-- VPC endpoints for private connectivity
-- Transit Gateway and IPSec VPN
-- AWS WAF, Security Groups, KMS encryption
-- AWS Secrets Manager for credential management
+### 🔄 Multi-Region High Availability
+- **Active-Passive Architecture** with automated failover between regions
+- **Pilot Light DR** - Minimal footprint in standby with instant scale-up capability
+- **Cross-Region Data Replication** for RDS, DynamoDB, and S3
 
-**Event Processing**
-- Kinesis Data Streams (10 shards, 10K+ msg/sec)
-- EventBridge for order routing
-- SQS/SNS with dead letter queues
-- Lambda functions with X-Ray tracing
+### ⚡ Ultra-Low Latency Trading
+- Sub-millisecond order processing with enhanced networking (SR-IOV, ENA)
+- Optimized EKS cluster with managed node groups for consistent performance
+- Direct VPC connectivity with Transit Gateway and IPSec VPN
 
-**Container Orchestration**
-- EKS cluster with managed node groups and auto-scaling
-- Cluster Autoscaler for automatic node scaling
-- EKS addons (VPC CNI, CoreDNS, Kube-proxy)
-- OIDC provider for service account integration
+### 🛡️ Enterprise Security
+- End-to-end encryption with AWS KMS
+- VPC isolation and network segmentation
+- IAM roles and policies with least privilege access
+- Automated security patching and compliance monitoring
 
-**Data & Storage**
-- RDS Multi-AZ for high availability
-- DynamoDB for real-time data
-- S3 with versioning and encryption
-- EFS for persistent storage
+### 📊 Real-time Monitoring & Analytics
+- Comprehensive observability with Prometheus and Grafana
+- CloudWatch metrics and alarms for all critical components
+- Centralized logging with CloudWatch Logs
 
-**Monitoring & CI/CD**
-- Prometheus and Grafana dashboards
-- CloudWatch with custom metrics
-- CodePipeline, CodeBuild, CodeCommit
-- AWS Backup with automated snapshots
+## 🚨 Disaster Recovery Strategy
 
-## Deployment Instructions
+### 🔄 Automated Failover Process
+1. **Detection**: Route 53 health checks monitor primary region health
+2. **Notification**: SNS alerts trigger Lambda functions
+3. **Scale-Up**: DR environment automatically scales to match primary region capacity
+4. **Traffic Shift**: DNS failover to DR region endpoints
+5. **Verification**: Automated validation of DR environment readiness
 
-### Prerequisites
+### ⏱️ Recovery Time Objective (RTO) & Recovery Point Objective (RPO)
+- **RTO**: < 15 minutes (automated failover)
+- **RPO**: < 5 minutes (data replication lag)
 
-- AWS CLI configured
-- Terraform >= 1.0
-- Appropriate AWS permissions
+### 🔄 Failback Process
+1. **Stabilization**: Primary region recovery and validation
+2. **Data Sync**: Reverse replication from DR to primary
+3. **Traffic Shift**: Gradual traffic migration back to primary
+4. **Scale-Down**: Automatic reduction of DR environment to pilot light
 
-### Step 1: Initialize Terraform
+## 🏗️ Architecture Overview
 
-```bash
-terraform init
+```mermaid
+graph TD
+    subgraph Primary Region [Primary Region - us-east-1]
+        A[API Gateway] --> B[EKS Cluster]
+        B --> C[RDS Multi-AZ]
+        B --> D[DynamoDB]
+        B --> E[S3]
+    end
+    
+    subgraph DR Region [Disaster Recovery - us-west-2]
+        F[EKS Pilot Light] --> G[RDS Read Replica]
+        F --> H[DynamoDB Global Table]
+        F --> I[S3 Cross-Region Replication]
+    end
+    
+    J[Route 53] -->|Primary| A
+    J -->|Failover| F
+    
+    C -.->|Async Replication. G
+    D <-->|Global Table| H
+    E -.->|Replication. I
 ```
 
-### Step 2: Configure Variables
+## 🛠️ Getting Started
 
-```bash
-cp terraform.tfvars.example terraform.tfvars
-# Edit with your environment settings
-```
+For detailed deployment and usage instructions, please refer to the [USAGE.md](USAGE.md) documentation.
 
-### Step 3: Plan Deployment
+## 📄 License
 
-```bash
-terraform plan
-```
-
-### Step 4: Deploy Infrastructure
-
-```bash
-terraform apply
-```
-
-### Step 5: Access EKS Cluster
-
-```bash
-# Configure kubectl
-aws eks update-kubeconfig --region <your-region> --name <project-name>-eks
-
-# Verify cluster access
-kubectl get nodes
-kubectl get pods --all-namespaces
-```
-
-## Key Features
-
-- **Ultra-Low Latency**: Sub-millisecond networking with enhanced instances
-- **High Availability**: Multi-AZ deployment with automated failover
-- **Disaster Recovery**: Cross-region pilot light DR with automated failover capabilities
-- **Security**: KMS encryption, VPC isolation, OIDC integration
-- **Monitoring**: CloudWatch logs with comprehensive cluster logging
-- **Auto-Scaling**: Cluster Autoscaler with dynamic node scaling (1-10 nodes)
-- **Compliance**: Audit trails and regulatory reporting
-
-## Disaster Recovery Configuration
-
-The project implements a cross-region disaster recovery strategy using a pilot light approach with automatic scaling:
-
-- **Pilot Light Architecture**: Minimal infrastructure (1 t3.small node) maintained in the DR region
-- **Automatic Scaling on Failover**: DR environment automatically scales to match primary region's configuration
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 - **Automatic Scale Down**: Returns to pilot light mode when failing back to primary
 - **Cross-Region Replication**: Automated data replication between primary and DR regions
 - **Automated Failover**: Route 53 health checks and Lambda functions for automated failover
@@ -260,7 +240,7 @@ Comprehensive documentation is available in the `docs/` folder with detailed gui
 ![AWS Kinesis Infrastructure Diagram](docs/infrastructure_diagram/aws_kinesis_infrastructure.png)
 
 ### System Layout
-![Layout Image](docs/images/layout_image.png)
+![Trading Architecture Layout.png](docs/images/Trading%20Architecture%20Layout.png)
 ![AWS Kinesis Layout](docs/images/aws_kinesis_layout.png)
 
 For interactive diagrams, see the [infrastructure diagram documentation](docs/infrastructure_diagram/README.md) or open the [draw.io XML file](docs/infrastructure_diagram/aws_kinesis_infrastructure.drawio.xml) in [draw.io](https://app.diagrams.net).
