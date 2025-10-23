@@ -94,14 +94,58 @@ kubectl get pods --all-namespaces
 
 ## Disaster Recovery Configuration
 
-The project implements a cross-region disaster recovery strategy using a pilot light approach:
+The project implements a cross-region disaster recovery strategy using a pilot light approach with automatic scaling:
 
-- **Pilot Light Architecture**: Minimal infrastructure maintained in the DR region
+- **Pilot Light Architecture**: Minimal infrastructure (1 t3.small node) maintained in the DR region
+- **Automatic Scaling on Failover**: DR environment automatically scales to match primary region's configuration
+- **Automatic Scale Down**: Returns to pilot light mode when failing back to primary
 - **Cross-Region Replication**: Automated data replication between primary and DR regions
 - **Automated Failover**: Route 53 health checks and Lambda functions for automated failover
-- **Recovery Objectives**: RTO of 15-30 minutes, RPO of ~15 minutes
+- **Recovery Objectives**: 
+  - RTO: 5-15 minutes (automated scaling)
+  - RPO: ~15 minutes (data replication lag)
 - **Data Replication**: RDS read replicas, S3 CRR, DynamoDB global tables
 - **Automated Testing**: Regular DR drills using automated testing scripts
+
+### How Automatic Scaling Works
+
+1. **Failover Detection**:
+   - Route 53 health checks detect primary region failure
+   - EventBridge triggers the scaling Lambda function
+   - Lambda scales up the DR environment to match primary's configuration
+
+2. **Scaling Process**:
+   - Retrieves primary EKS node group configuration
+   - Updates DR node group to match:
+     - Instance types
+     - Desired/min/max node counts
+     - Other scaling parameters
+
+3. **Failback Process**:
+   - When primary region recovers
+   - EventBridge detects health restoration
+   - Lambda scales down DR to pilot light mode (1 t3.small node)
+
+4. **Monitoring & Alerts**:
+   - CloudWatch metrics track scaling events
+   - SNS notifications for all state changes
+   - Logs all scaling operations for audit
+
+### Manual Testing
+
+```bash
+# Test failover (scale up)
+aws lambda invoke \
+  --function-name ${var.project_name}-sync-cluster-sizes \
+  --payload '{"action": "failover"}' \
+  response.json
+
+# Test failback (scale down)
+aws lambda invoke \
+  --function-name ${var.project_name}-sync-cluster-sizes \
+  --payload '{"action": "failback"}' \
+  response.json
+```
 
 See the [Multi-Region DR Strategy](docs/disaster-recovery/multi-region-dr-strategy.md) document for detailed implementation.
 

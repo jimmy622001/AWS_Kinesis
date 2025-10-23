@@ -99,16 +99,31 @@ module "monitoring" {
   project_name = var.project_name
 }
 
+# Disaster Recovery Module
 module "disaster_recovery" {
   source = "./modules/disaster-recovery"
 
+  # Required variables
   vpc_id             = module.networking.vpc_id
   vpc_cidr           = var.vpc_cidr
   private_subnet_ids = module.networking.private_subnet_ids
   kms_key_arn        = module.security.kms_key_id
   project_name       = var.project_name
   aws_region         = var.aws_region
+  aws_account_id     = local.account_id
+
+  # Optional variables with defaults
+  dr_region               = var.dr_region
+  dr_vpc_cidr             = var.dr_vpc_cidr
+  dns_zone_name           = var.dns_zone_name
+  application_domain      = var.application_domain
+  primary_endpoint_domain = var.primary_endpoint_domain
+  dr_endpoint_domain      = var.dr_endpoint_domain
+  primary_dns_zone_id     = var.primary_dns_zone_id
+  dr_dns_zone_id          = var.dr_dns_zone_id
+  primary_alb_name        = var.primary_alb_name
 }
+
 
 module "observability" {
   source = "./modules/observability"

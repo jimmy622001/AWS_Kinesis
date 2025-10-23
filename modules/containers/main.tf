@@ -239,8 +239,8 @@ resource "aws_iam_policy" "cluster_autoscaler" {
         }
       },
       {
-        Effect = "Allow"
-        Action = "ec2:DescribeLaunchTemplateVersions"
+        Effect   = "Allow"
+        Action   = "ec2:DescribeLaunchTemplateVersions"
         Resource = "*"
       }
     ]

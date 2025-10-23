@@ -44,6 +44,61 @@ variable "rds_master_password" {
   sensitive   = true
 }
 
+# Disaster Recovery Variables
+variable "dr_region" {
+  description = "AWS region for disaster recovery"
+  type        = string
+  default     = "us-west-2"
+}
+
+variable "dr_vpc_cidr" {
+  description = "CIDR block for DR VPC"
+  type        = string
+  default     = "10.1.0.0/16"
+}
+
+variable "dns_zone_name" {
+  description = "DNS zone name for the application"
+  type        = string
+  default     = "example.com"
+}
+
+variable "application_domain" {
+  description = "Main application domain name"
+  type        = string
+  default     = "app.example.com"
+}
+
+variable "primary_endpoint_domain" {
+  description = "Primary region endpoint domain"
+  type        = string
+  default     = "primary.app.example.com"
+}
+
+variable "dr_endpoint_domain" {
+  description = "DR region endpoint domain"
+  type        = string
+  default     = "dr.app.example.com"
+}
+
+variable "primary_dns_zone_id" {
+  description = "Route53 zone ID for primary region"
+  type        = string
+  default     = ""
+}
+
+variable "dr_dns_zone_id" {
+  description = "Route53 zone ID for DR region"
+  type        = string
+  default     = ""
+}
+
+variable "primary_alb_name" {
+  description = "Name of the primary ALB"
+  type        = string
+  default     = "primary-alb"
+}
+
 # Network Variables
 variable "customer_gateway_ip" {
   description = "Public IP address for customer gateway"

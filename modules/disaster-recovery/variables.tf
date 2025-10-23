@@ -83,3 +83,8 @@ variable "primary_alb_name" {
   type        = string
   default     = "app/primary-alb/abcdef1234567890"
 }
+
+variable "aws_account_id" {
+  description = "The AWS account ID"
+  type        = string
+}

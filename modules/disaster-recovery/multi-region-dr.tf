@@ -190,19 +190,19 @@ resource "aws_security_group" "dr_rds" {
 
 # DR RDS Read Replica (Pilot Light)
 resource "aws_db_instance" "dr_replica" {
-  provider                    = aws.dr_region
-  identifier                  = "${var.project_name}-dr-database"
-  replicate_source_db         = aws_db_instance.main.arn
-  instance_class              = "db.t3.micro"  # Smaller instance for cost efficiency
-  vpc_security_group_ids      = [aws_security_group.dr_rds.id]
-  db_subnet_group_name        = aws_db_subnet_group.dr.name
-  skip_final_snapshot         = true
-  auto_minor_version_upgrade  = true
-  
+  provider                   = aws.dr_region
+  identifier                 = "${var.project_name}-dr-database"
+  replicate_source_db        = aws_db_instance.main.arn
+  instance_class             = "db.t3.micro" # Smaller instance for cost efficiency
+  vpc_security_group_ids     = [aws_security_group.dr_rds.id]
+  db_subnet_group_name       = aws_db_subnet_group.dr.name
+  skip_final_snapshot        = true
+  auto_minor_version_upgrade = true
+
   # For a pilot light setup, consider:
-  multi_az               = false  # Can be true for higher DR reliability
+  multi_az                = false # Can be true for higher DR reliability
   backup_retention_period = 5     # Fewer days than primary 
-  
+
   tags = {
     Name        = "${var.project_name}-dr-database"
     Environment = "dr"
@@ -218,7 +218,7 @@ resource "aws_db_instance" "dr_replica" {
 # DR S3 Bucket for application data
 resource "aws_s3_bucket" "dr" {
   provider      = aws.dr_region
-  bucket        = "${var.project_name}-dr-data-${data.aws_caller_identity.current.account_id}"
+  bucket        = "${var.project_name}-dr-data-${var.aws_account_id}"
   force_destroy = true
 
   tags = {
@@ -229,7 +229,7 @@ resource "aws_s3_bucket" "dr" {
 resource "aws_s3_bucket_versioning" "dr" {
   provider = aws.dr_region
   bucket   = aws_s3_bucket.dr.id
-  
+
   versioning_configuration {
     status = "Enabled"
   }
@@ -278,7 +278,7 @@ resource "aws_iam_policy" "replication" {
         ]
         Effect = "Allow"
         Resource = [
-          "arn:aws:s3:::${var.project_name}-data-${data.aws_caller_identity.current.account_id}"
+          "arn:aws:s3:::${var.project_name}-data-${var.aws_account_id}"
         ]
       },
       {
@@ -288,7 +288,7 @@ resource "aws_iam_policy" "replication" {
         ]
         Effect = "Allow"
         Resource = [
-          "arn:aws:s3:::${var.project_name}-data-${data.aws_caller_identity.current.account_id}/*"
+          "arn:aws:s3:::${var.project_name}-data-${var.aws_account_id}/*"
         ]
       },
       {
@@ -296,8 +296,8 @@ resource "aws_iam_policy" "replication" {
           "s3:ReplicateObject",
           "s3:ReplicateDelete"
         ]
-        Effect = "Allow"
-        Resource = "arn:aws:s3:::${var.project_name}-dr-data-${data.aws_caller_identity.current.account_id}/*"
+        Effect   = "Allow"
+        Resource = "arn:aws:s3:::${var.project_name}-dr-data-${var.aws_account_id}/*"
       }
     ]
   })
@@ -310,7 +310,7 @@ resource "aws_iam_role_policy_attachment" "replication" {
 
 # Primary S3 bucket for application data
 resource "aws_s3_bucket" "primary" {
-  bucket        = "${var.project_name}-data-${data.aws_caller_identity.current.account_id}"
+  bucket        = "${var.project_name}-data-${var.aws_account_id}"
   force_destroy = true
 
   tags = {
@@ -320,7 +320,7 @@ resource "aws_s3_bucket" "primary" {
 
 resource "aws_s3_bucket_versioning" "primary" {
   bucket = aws_s3_bucket.primary.id
-  
+
   versioning_configuration {
     status = "Enabled"
   }
@@ -329,7 +329,7 @@ resource "aws_s3_bucket_versioning" "primary" {
 # Replication configuration
 resource "aws_s3_bucket_replication_configuration" "replication" {
   depends_on = [aws_s3_bucket_versioning.primary]
-  
+
   role   = aws_iam_role.replication.arn
   bucket = aws_s3_bucket.primary.id
 
@@ -386,14 +386,14 @@ resource "aws_route53_record" "app_failover" {
   zone_id = data.aws_route53_zone.main.zone_id
   name    = var.application_domain
   type    = "A"
-  
+
   failover_routing_policy {
     type = "PRIMARY"
   }
-  
+
   health_check_id = aws_route53_health_check.primary.id
   set_identifier  = "primary"
-  
+
   alias {
     name                   = var.primary_endpoint_domain
     zone_id                = var.primary_dns_zone_id
@@ -405,14 +405,14 @@ resource "aws_route53_record" "app_failover_dr" {
   zone_id = data.aws_route53_zone.main.zone_id
   name    = var.application_domain
   type    = "A"
-  
+
   failover_routing_policy {
     type = "SECONDARY"
   }
-  
+
   health_check_id = aws_route53_health_check.dr.id
   set_identifier  = "dr"
-  
+
   alias {
     name                   = var.dr_endpoint_domain
     zone_id                = var.dr_dns_zone_id
@@ -475,16 +475,16 @@ resource "aws_security_group" "dr_eks_cluster" {
 
 # DR EKS Cluster IAM Role (reuse primary role)
 resource "aws_eks_cluster" "dr" {
-  provider    = aws.dr_region
-  name        = "${var.project_name}-dr-eks"
-  role_arn    = aws_iam_role.eks_cluster_role.arn
-  version     = "1.32"
+  provider = aws.dr_region
+  name     = "${var.project_name}-dr-eks"
+  role_arn = aws_iam_role.eks_cluster_role.arn
+  version  = "1.32"
 
   vpc_config {
     subnet_ids              = aws_subnet.dr_private[*].id
     endpoint_private_access = true
     endpoint_public_access  = true
-    public_access_cidrs     = ["0.0.0.0/0"]  # Consider restricting in production
+    public_access_cidrs     = ["0.0.0.0/0"] # Consider restricting in production
     security_group_ids      = [aws_security_group.dr_eks_cluster.id]
   }
 
@@ -515,7 +515,7 @@ resource "aws_eks_node_group" "dr" {
   node_group_name = "${var.project_name}-dr-nodes"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = aws_subnet.dr_private[*].id
-  instance_types  = ["t3.small"]  # Smaller instance type for cost efficiency
+  instance_types  = ["t3.small"] # Smaller instance type for cost efficiency
   capacity_type   = "ON_DEMAND"
   ami_type        = "AL2_x86_64"
 
@@ -536,10 +536,10 @@ resource "aws_eks_node_group" "dr" {
 
 # Core DNS addon for DR cluster
 resource "aws_eks_addon" "dr_coredns" {
-  provider      = aws.dr_region
-  cluster_name  = aws_eks_cluster.dr.name
-  addon_name    = "coredns"
-  depends_on    = [aws_eks_node_group.dr]
+  provider     = aws.dr_region
+  cluster_name = aws_eks_cluster.dr.name
+  addon_name   = "coredns"
+  depends_on   = [aws_eks_node_group.dr]
 }
 
 #######################
@@ -547,11 +547,11 @@ resource "aws_eks_addon" "dr_coredns" {
 #######################
 
 resource "aws_dynamodb_table" "primary" {
-  name           = "${var.project_name}-session-store"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "SessionId"
-  stream_enabled = true
-  stream_view_type = "NEW_AND_OLD_IMAGES"  # Required for global tables
+  name             = "${var.project_name}-session-store"
+  billing_mode     = "PAY_PER_REQUEST"
+  hash_key         = "SessionId"
+  stream_enabled   = true
+  stream_view_type = "NEW_AND_OLD_IMAGES" # Required for global tables
 
   attribute {
     name = "SessionId"
@@ -569,11 +569,11 @@ resource "aws_dynamodb_table" "primary" {
 }
 
 resource "aws_dynamodb_table" "dr" {
-  provider       = aws.dr_region
-  name           = "${var.project_name}-session-store"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "SessionId"
-  stream_enabled = true
+  provider         = aws.dr_region
+  name             = "${var.project_name}-session-store"
+  billing_mode     = "PAY_PER_REQUEST"
+  hash_key         = "SessionId"
+  stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
@@ -593,13 +593,13 @@ resource "aws_dynamodb_table" "dr" {
 
 resource "aws_dynamodb_global_table" "session_store" {
   depends_on = [aws_dynamodb_table.primary, aws_dynamodb_table.dr]
-  
+
   name = "${var.project_name}-session-store"
-  
+
   replica {
     region_name = var.aws_region
   }
-  
+
   replica {
     region_name = var.dr_region
   }
@@ -620,23 +620,19 @@ resource "aws_cloudwatch_metric_alarm" "primary_health" {
   statistic           = "Average"
   threshold           = 1
   alarm_description   = "This alarm monitors primary region ALB health"
-  
+
   dimensions = {
     LoadBalancer = var.primary_alb_name
   }
-  
+
   alarm_actions = [aws_sns_topic.dr_alerts.arn]
 }
 
-# SNS Topic for DR alerts
-resource "aws_sns_topic" "dr_alerts" {
-  name = "${var.project_name}-dr-alerts"
-}
 
 # Lambda function for automated failover (pseudo code)
 resource "aws_iam_role" "dr_failover_lambda" {
   name = "${var.project_name}-dr-failover-lambda"
-  
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -653,7 +649,7 @@ resource "aws_iam_role" "dr_failover_lambda" {
 
 resource "aws_iam_policy" "dr_failover_lambda" {
   name = "${var.project_name}-dr-failover-lambda-policy"
-  
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -678,20 +674,20 @@ resource "aws_iam_role_policy_attachment" "dr_failover_lambda" {
 }
 
 resource "aws_lambda_function" "dr_failover" {
-  function_name    = "${var.project_name}-dr-failover"
-  role             = aws_iam_role.dr_failover_lambda.arn
-  handler          = "index.handler"
-  runtime          = "nodejs18.x"
-  timeout          = 60
-  
+  function_name = "${var.project_name}-dr-failover"
+  role          = aws_iam_role.dr_failover_lambda.arn
+  handler       = "index.handler"
+  runtime       = "nodejs18.x"
+  timeout       = 60
+
   filename         = "${path.module}/dr_failover_function.zip"
   source_code_hash = filebase64sha256("${path.module}/dr_failover_function.zip")
-  
+
   environment {
     variables = {
-      PRIMARY_REGION   = var.aws_region
-      DR_REGION        = var.dr_region
-      HOSTED_ZONE_ID   = data.aws_route53_zone.main.zone_id
+      PRIMARY_REGION     = var.aws_region
+      DR_REGION          = var.dr_region
+      HOSTED_ZONE_ID     = data.aws_route53_zone.main.zone_id
       APPLICATION_DOMAIN = var.application_domain
     }
   }

@@ -48,7 +48,7 @@ resource "aws_kinesis_firehose_delivery_stream" "main" {
     buffering_interval = 300
 
     compression_format = "GZIP"
-    kms_key_arn       = aws_kms_key.events.arn
+    kms_key_arn        = aws_kms_key.events.arn
   }
 }
 

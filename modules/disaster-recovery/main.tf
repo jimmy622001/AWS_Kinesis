@@ -84,10 +84,10 @@ resource "aws_db_instance" "main" {
   storage_encrypted     = true
   kms_key_id            = var.kms_key_arn
 
-  engine                      = "mysql"
-  engine_version              = "8.0"
-  instance_class              = "db.t3.micro"
-  auto_minor_version_upgrade  = true
+  engine                     = "mysql"
+  engine_version             = "8.0"
+  instance_class             = "db.t3.micro"
+  auto_minor_version_upgrade = true
 
   db_name  = "learningdb"
   username = "admin"
@@ -105,11 +105,11 @@ resource "aws_db_instance" "main" {
   monitoring_role_arn = aws_iam_role.rds_enhanced_monitoring.arn
 
   iam_database_authentication_enabled = true
-  
+
   enabled_cloudwatch_logs_exports = [
     "error",
     "general",
-    "slow_query"
+    "slowquery"
   ]
 
   skip_final_snapshot = true
